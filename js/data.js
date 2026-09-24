@@ -1,23 +1,65 @@
-// ─── Physical Constants (CODATA / IAU precise) ─────────────────────────────
+// ─── Precise constants ─────────────────────────────────────────────────────
 const CONST = {
-  G: 6.67430e-11,       // m³ kg⁻¹ s⁻²
-  M_SUN: 1.98847e30,    // kg
-  M_EARTH: 5.9722e24,   // kg
-  R_EARTH: 6.371e6,     // m
-  AU: 1.495978707e11,   // m
-  C: 299792458,         // m/s
-  H: 6.62607015e-34,    // J·s
-  HBAR: 1.054571817e-34,// J·s
-  K_B: 1.380649e-23,    // J/K
-  SIGMA: 5.670374419e-8,// W m⁻² K⁻⁴
-  E: 1.602176634e-19,   // C
-  M_E: 9.1093837e-31,   // kg
-  M_P: 1.67262192e-27,  // kg
-  G_EARTH: 9.80665,     // m/s²
-  EPSILON0: 8.8541878128e-12 // F/m
+  G: 6.67430e-11,
+  M_SUN: 1.98847e30,
+  M_EARTH: 5.9722e24,
+  R_EARTH: 6.371e6,
+  AU: 1.495978707e11,
+  C: 299792458,
+  H: 6.62607015e-34,
+  HBAR: 1.054571817e-34,
+  K_B: 1.380649e-23,
+  SIGMA: 5.670374419e-8,
+  E: 1.602176634e-19,
+  M_E: 9.1093837e-31,
+  G_EARTH: 9.80665,
+  K_COULOMB: 8.9875517923e9,
+  N_A: 6.02214076e23
 };
 
-// ─── Periodic Table (118 elements) ─────────────────────────────────────────
+// ─── UI strings (FA / EN) ──────────────────────────────────────────────────
+const STR = {
+  fa: {
+    offline: 'کاملاً آفلاین',
+    settings: 'تنظیمات',
+    theme: 'تم رنگی',
+    language: 'زبان',
+    run: '▶ اجرا',
+    reset: '↺ بازنشانی',
+    save: '☆ ذخیره',
+    saved: '✓ ذخیره شد',
+    resetMsg: 'پارامترها بازنشانی شدند',
+    results: 'نتایج و مشاهده‌گر',
+    resultsSub: 'محاسبات زنده و انیمیشن آزمایش',
+    liveAnim: 'انیمیشن زنده',
+    searchEl: 'جستجوی عنصر',
+    pickTwo: 'دو عنصر را انتخاب کنید',
+    noReaction: 'واکنش آموزشی ثبت‌نشده',
+    guide: 'راهنما',
+    clickEl: 'روی عنصر کلیک یا جستجو کنید'
+  },
+  en: {
+    offline: 'Fully offline',
+    settings: 'Settings',
+    theme: 'Color theme',
+    language: 'Language',
+    run: '▶ Run',
+    reset: '↺ Reset',
+    save: '☆ Save',
+    saved: '✓ Saved',
+    resetMsg: 'Parameters reset',
+    results: 'Results & Viewer',
+    resultsSub: 'Live calculations and experiment animation',
+    liveAnim: 'Live animation',
+    searchEl: 'Search element',
+    pickTwo: 'Select two elements',
+    noReaction: 'No educational reaction listed',
+    guide: 'Guide',
+    clickEl: 'Click an element or search'
+  }
+};
+
+// ─── Periodic table ────────────────────────────────────────────────────────
 const ELEMENTS = [
   {z:1,s:'H',n:'هیدروژن',en:'Hydrogen',m:1.008,c:'nonmetal',e:'1s¹',mp:-259.16,bp:-252.87,g:1,p:1},
   {z:2,s:'He',n:'هلیوم',en:'Helium',m:4.0026,c:'noble',e:'1s²',mp:-272.2,bp:-268.93,g:18,p:1},
@@ -140,623 +182,1073 @@ const ELEMENTS = [
 ];
 
 const CAT_NAMES = {
-  alkali:'فلز قلیایی', alkaline:'قلیایی خاکی', transition:'فلز واسطه',
-  post:'فلز پس‌واسطه', metalloid:'شبه فلز', nonmetal:'نافلز',
-  halogen:'هالوژن', noble:'گاز نجیب', lanthanide:'لانتانید',
-  actinide:'اکتینید', unknown:'ناشناخته'
+  fa: {alkali:'فلز قلیایی',alkaline:'قلیایی خاکی',transition:'فلز واسطه',post:'فلز پس‌واسطه',metalloid:'شبه فلز',nonmetal:'نافلز',halogen:'هالوژن',noble:'گاز نجیب',lanthanide:'لانتانید',actinide:'اکتینید',unknown:'ناشناخته'},
+  en: {alkali:'Alkali metal',alkaline:'Alkaline earth',transition:'Transition',post:'Post-transition',metalloid:'Metalloid',nonmetal:'Nonmetal',halogen:'Halogen',noble:'Noble gas',lanthanide:'Lanthanide',actinide:'Actinide',unknown:'Unknown'}
 };
 
-// Simple known reactions (demo educational)
 const REACTIONS = {
-  'H+O': { prod: 'H₂O', name: 'آب', note: '۲H₂ + O₂ → ۲H₂O' },
-  'Na+Cl': { prod: 'NaCl', name: 'نمک خوراکی', note: '۲Na + Cl₂ → ۲NaCl' },
-  'C+O': { prod: 'CO₂', name: 'دی‌اکسید کربن', note: 'C + O₂ → CO₂' },
-  'Fe+O': { prod: 'Fe₂O₃', name: 'اکسید آهن (زنگ)', note: '۴Fe + ۳O₂ → ۲Fe₂O₃' },
-  'H+Cl': { prod: 'HCl', name: 'هیدروکلریک اسید', note: 'H₂ + Cl₂ → ۲HCl' },
-  'N+H': { prod: 'NH₃', name: 'آمونیاک', note: 'N₂ + ۳H₂ → ۲NH₃' },
-  'Ca+O': { prod: 'CaO', name: 'اکسید کلسیم', note: '۲Ca + O₂ → ۲CaO' },
-  'Mg+O': { prod: 'MgO', name: 'اکسید منیزیم', note: '۲Mg + O₂ → ۲MgO' },
-  'S+O': { prod: 'SO₂', name: 'دی‌اکسید گوگرد', note: 'S + O₂ → SO₂' },
-  'K+Cl': { prod: 'KCl', name: 'کلرید پتاسیم', note: '۲K + Cl₂ → ۲KCl' }
+  'H+O':{prod:'H₂O',nameFa:'آب',nameEn:'Water',note:'2H₂ + O₂ → 2H₂O'},
+  'Na+Cl':{prod:'NaCl',nameFa:'نمک خوراکی',nameEn:'Table salt',note:'2Na + Cl₂ → 2NaCl'},
+  'C+O':{prod:'CO₂',nameFa:'دی‌اکسید کربن',nameEn:'Carbon dioxide',note:'C + O₂ → CO₂'},
+  'Fe+O':{prod:'Fe₂O₃',nameFa:'اکسید آهن',nameEn:'Iron oxide',note:'4Fe + 3O₂ → 2Fe₂O₃'},
+  'H+Cl':{prod:'HCl',nameFa:'هیدروکلریک اسید',nameEn:'Hydrochloric acid',note:'H₂ + Cl₂ → 2HCl'},
+  'N+H':{prod:'NH₃',nameFa:'آمونیاک',nameEn:'Ammonia',note:'N₂ + 3H₂ → 2NH₃'},
+  'Ca+O':{prod:'CaO',nameFa:'اکسید کلسیم',nameEn:'Calcium oxide',note:'2Ca + O₂ → 2CaO'},
+  'Mg+O':{prod:'MgO',nameFa:'اکسید منیزیم',nameEn:'Magnesium oxide',note:'2Mg + O₂ → 2MgO'},
+  'S+O':{prod:'SO₂',nameFa:'دی‌اکسید گوگرد',nameEn:'Sulfur dioxide',note:'S + O₂ → SO₂'},
+  'K+Cl':{prod:'KCl',nameFa:'کلرید پتاسیم',nameEn:'Potassium chloride',note:'2K + Cl₂ → 2KCl'}
 };
 
-// ─── Experiment Definitions ────────────────────────────────────────────────
-// Each category has multiple experiments
+// ─── Categories & experiments (verified formulas) ──────────────────────────
+// Physics formulas checked:
+// kinematics: x = v0*t + 0.5*a*t^2 , v = v0 + a*t          ✓
+// freefall:   t = sqrt(2h/g) , v = g*t                      ✓
+// projectile: R = v0^2*sin(2θ)/g , H = v0^2*sin^2(θ)/(2g)  ✓
+// circular:   ac = v^2/r , T = 2πr/v , F = m*ac             ✓
+// momentum:   elastic 1D formulas                           ✓
+// friction:   fk = μ*m*g , s = v0^2/(2μg)                   ✓
+// spring:     T = 2π√(m/k) , ω = √(k/m) , E = 0.5*k*A^2    ✓
+// torque:     τ = r*F*sinθ                                  ✓
+// density:    ρ = m/V , Fb = ρf*V*g                         ✓
+// workpower:  W = F*d*cosθ , P = W/t                        ✓
+
 const CATEGORIES = {
   physics: {
-    title: 'فیزیک و حرکت',
-    icon: '⚙️',
+    titleFa: 'فیزیک و حرکت', titleEn: 'Physics & Motion', icon: '⚙️',
     experiments: {
       kinematics: {
-        name: 'حرکت با شتاب ثابت',
-        formula: 'x = v₀t + ½at²   ·   v = v₀ + at',
-        desc: 'جابه‌جایی و سرعت نهایی جسم با شتاب ثابت.',
-        fields: [['v','سرعت اولیه','m/s',-20,40,0.5,8],['a','شتاب','m/s²',-10,15,0.5,2],['t','زمان','s',0.5,25,0.5,6]],
+        nameFa: 'حرکت با شتاب ثابت', nameEn: 'Constant acceleration',
+        formula: 'x = v₀t + ½at²  ·  v = v₀ + at',
+        descFa: 'جابه‌جایی و سرعت نهایی با شتاب ثابت.',
+        descEn: 'Displacement and final velocity under constant acceleration.',
+        fields: [
+          {k:'v', fa:'سرعت اولیه', en:'Initial velocity', u:'m/s', min:-20, max:40, step:0.5, def:8},
+          {k:'a', fa:'شتاب', en:'Acceleration', u:'m/s²', min:-10, max:15, step:0.5, def:2},
+          {k:'t', fa:'زمان', en:'Time', u:'s', min:0.5, max:25, step:0.5, def:6}
+        ],
         calc: v => {
           const vel = v.v + v.a * v.t;
           const x = v.v * v.t + 0.5 * v.a * v.t * v.t;
-          return [['جابه‌جایی',x.toFixed(2),'m'],['سرعت نهایی',vel.toFixed(2),'m/s'],['زمان',v.t.toFixed(1),'s']];
+          return [
+            {fa:'جابه‌جایی', en:'Displacement', val:x.toFixed(2), u:'m'},
+            {fa:'سرعت نهایی', en:'Final velocity', val:vel.toFixed(2), u:'m/s'},
+            {fa:'زمان', en:'Time', val:v.t.toFixed(1), u:'s'}
+          ];
         },
-        explain: v => `در ${v.t} s با v₀=${v.v} m/s و a=${v.a} m/s² → x=${(v.v*v.t+0.5*v.a*v.t*v.t).toFixed(2)} m`
+        explainFa: v => `در ${v.t} s با v₀=${v.v} و a=${v.a} → x = ${(v.v*v.t+0.5*v.a*v.t*v.t).toFixed(2)} m`,
+        explainEn: v => `At t=${v.t}s with v₀=${v.v}, a=${v.a} → x=${(v.v*v.t+0.5*v.a*v.t*v.t).toFixed(2)} m`
       },
       freefall: {
-        name: 'سقوط آزاد',
-        formula: 'h = ½gt²   ·   v = gt',
-        desc: 'سقوط آزاد از ارتفاع بدون مقاومت هوا.',
-        fields: [['h','ارتفاع','m',1,200,1,50],['g','شتاب گرانش','m/s²',1,20,0.1,9.81]],
+        nameFa: 'سقوط آزاد', nameEn: 'Free fall',
+        formula: 'h = ½gt²  ·  v = gt  ·  t = √(2h/g)',
+        descFa: 'سقوط از ارتفاع بدون مقاومت هوا.',
+        descEn: 'Fall from height with no air resistance.',
+        fields: [
+          {k:'h', fa:'ارتفاع', en:'Height', u:'m', min:1, max:200, step:1, def:50},
+          {k:'g', fa:'شتاب گرانش', en:'Gravity g', u:'m/s²', min:1, max:20, step:0.1, def:9.81}
+        ],
         calc: v => {
           const t = Math.sqrt(2 * v.h / v.g);
           const vel = v.g * t;
-          return [['زمان سقوط',t.toFixed(2),'s'],['سرعت برخورد',vel.toFixed(2),'m/s'],['ارتفاع',v.h.toFixed(0),'m']];
+          return [
+            {fa:'زمان سقوط', en:'Fall time', val:t.toFixed(2), u:'s'},
+            {fa:'سرعت برخورد', en:'Impact speed', val:vel.toFixed(2), u:'m/s'},
+            {fa:'ارتفاع', en:'Height', val:v.h.toFixed(0), u:'m'}
+          ];
         },
-        explain: v => `از ارتفاع ${v.h} m با g=${v.g} → زمان سقوط ${Math.sqrt(2*v.h/v.g).toFixed(2)} s`
+        explainFa: v => `از ${v.h} m با g=${v.g} → t=${Math.sqrt(2*v.h/v.g).toFixed(2)} s`,
+        explainEn: v => `From ${v.h} m at g=${v.g} → t=${Math.sqrt(2*v.h/v.g).toFixed(2)} s`
       },
       projectile: {
-        name: 'پرتابه (پرتاب اریب)',
-        formula: 'R = v₀²sin(2θ)/g   ·   H = v₀²sin²θ/(2g)',
-        desc: 'برد و ارتفاع بیشینه پرتابه در زاویه θ.',
-        fields: [['v0','سرعت اولیه','m/s',5,80,1,30],['theta','زاویه','°',5,85,1,45],['g','g','m/s²',5,15,0.1,9.81]],
+        nameFa: 'پرتابه', nameEn: 'Projectile',
+        formula: 'R = v₀²sin2θ/g  ·  H = v₀²sin²θ/(2g)',
+        descFa: 'برد و ارتفاع بیشینه پرتابه.',
+        descEn: 'Range and max height of a projectile.',
+        fields: [
+          {k:'v0', fa:'سرعت اولیه', en:'Initial speed', u:'m/s', min:5, max:80, step:1, def:30},
+          {k:'theta', fa:'زاویه', en:'Angle', u:'°', min:5, max:85, step:1, def:45},
+          {k:'g', fa:'g', en:'g', u:'m/s²', min:5, max:15, step:0.1, def:9.81}
+        ],
         calc: v => {
           const th = v.theta * Math.PI / 180;
           const R = (v.v0 ** 2 * Math.sin(2 * th)) / v.g;
           const H = (v.v0 ** 2 * Math.sin(th) ** 2) / (2 * v.g);
           const T = (2 * v.v0 * Math.sin(th)) / v.g;
-          return [['برد',R.toFixed(1),'m'],['ارتفاع بیشینه',H.toFixed(1),'m'],['زمان پرواز',T.toFixed(2),'s']];
+          return [
+            {fa:'برد', en:'Range', val:R.toFixed(1), u:'m'},
+            {fa:'ارتفاع بیشینه', en:'Max height', val:H.toFixed(1), u:'m'},
+            {fa:'زمان پرواز', en:'Flight time', val:T.toFixed(2), u:'s'}
+          ];
         },
-        explain: v => `پرتابه با ${v.v0} m/s در زاویه ${v.theta}° → برد ${(v.v0**2*Math.sin(2*v.theta*Math.PI/180)/v.g).toFixed(1)} m`
+        explainFa: v => `v₀=${v.v0} در ${v.theta}° → برد ${(v.v0**2*Math.sin(2*v.theta*Math.PI/180)/v.g).toFixed(1)} m`,
+        explainEn: v => `v₀=${v.v0} at ${v.theta}° → range ${(v.v0**2*Math.sin(2*v.theta*Math.PI/180)/v.g).toFixed(1)} m`
       },
       circular: {
-        name: 'حرکت دایره‌ای یکنواخت',
-        formula: 'aᶜ = v²/r   ·   T = 2πr/v   ·   F = mv²/r',
-        desc: 'شتاب مرکزگرا و نیروی لازم برای حرکت دایره‌ای.',
-        fields: [['v','سرعت','m/s',1,50,0.5,10],['r','شعاع','m',0.5,50,0.5,5],['m','جرم','kg',0.1,20,0.1,2]],
+        nameFa: 'حرکت دایره‌ای', nameEn: 'Uniform circular',
+        formula: 'aᶜ = v²/r  ·  T = 2πr/v  ·  F = mv²/r',
+        descFa: 'شتاب مرکزگرا و نیروی لازم.',
+        descEn: 'Centripetal acceleration and force.',
+        fields: [
+          {k:'v', fa:'سرعت', en:'Speed', u:'m/s', min:1, max:50, step:0.5, def:10},
+          {k:'r', fa:'شعاع', en:'Radius', u:'m', min:0.5, max:50, step:0.5, def:5},
+          {k:'m', fa:'جرم', en:'Mass', u:'kg', min:0.1, max:20, step:0.1, def:2}
+        ],
         calc: v => {
           const ac = v.v ** 2 / v.r;
           const T = 2 * Math.PI * v.r / v.v;
           const F = v.m * ac;
-          return [['شتاب مرکزگرا',ac.toFixed(2),'m/s²'],['دوره تناوب',T.toFixed(2),'s'],['نیروی مرکزگرا',F.toFixed(2),'N']];
+          return [
+            {fa:'شتاب مرکزگرا', en:'Centripetal a', val:ac.toFixed(2), u:'m/s²'},
+            {fa:'دوره تناوب', en:'Period', val:T.toFixed(2), u:'s'},
+            {fa:'نیروی مرکزگرا', en:'Centripetal F', val:F.toFixed(2), u:'N'}
+          ];
         },
-        explain: v => `v=${v.v} m/s در r=${v.r} m → aᶜ=${(v.v**2/v.r).toFixed(2)} m/s²`
+        explainFa: v => `v=${v.v}, r=${v.r} → aᶜ=${(v.v**2/v.r).toFixed(2)} m/s²`,
+        explainEn: v => `v=${v.v}, r=${v.r} → aᶜ=${(v.v**2/v.r).toFixed(2)} m/s²`
       },
       momentum: {
-        name: 'تکانه و برخورد',
-        formula: 'p = mv   ·   p₁ + p₂ = p₁′ + p₂′ (کشسان)',
-        desc: 'تکانه قبل و بعد از برخورد کاملاً کشسان یک‌بعدی.',
-        fields: [['m1','جرم ۱','kg',0.1,20,0.1,2],['v1','سرعت ۱','m/s',-20,20,0.5,5],['m2','جرم ۲','kg',0.1,20,0.1,3],['v2','سرعت ۲','m/s',-20,20,0.5,-2]],
+        nameFa: 'تکانه و برخورد', nameEn: 'Momentum & collision',
+        formula: 'p = mv  ·  elastic: v₁′ , v₂′ conserved p & KE',
+        descFa: 'برخورد کاملاً کشسان یک‌بعدی.',
+        descEn: '1-D perfectly elastic collision.',
+        fields: [
+          {k:'m1', fa:'جرم ۱', en:'Mass 1', u:'kg', min:0.1, max:20, step:0.1, def:2},
+          {k:'v1', fa:'سرعت ۱', en:'Velocity 1', u:'m/s', min:-20, max:20, step:0.5, def:5},
+          {k:'m2', fa:'جرم ۲', en:'Mass 2', u:'kg', min:0.1, max:20, step:0.1, def:3},
+          {k:'v2', fa:'سرعت ۲', en:'Velocity 2', u:'m/s', min:-20, max:20, step:0.5, def:-2}
+        ],
         calc: v => {
-          const p1 = v.m1 * v.v1, p2 = v.m2 * v.v2;
+          const p = v.m1 * v.v1 + v.m2 * v.v2;
           const v1f = ((v.m1 - v.m2) * v.v1 + 2 * v.m2 * v.v2) / (v.m1 + v.m2);
           const v2f = ((v.m2 - v.m1) * v.v2 + 2 * v.m1 * v.v1) / (v.m1 + v.m2);
-          return [['تکانه کل', (p1+p2).toFixed(2),'kg·m/s'],['سرعت نهایی ۱',v1f.toFixed(2),'m/s'],['سرعت نهایی ۲',v2f.toFixed(2),'m/s']];
+          return [
+            {fa:'تکانه کل', en:'Total p', val:p.toFixed(2), u:'kg·m/s'},
+            {fa:'v₁ نهایی', en:'Final v₁', val:v1f.toFixed(2), u:'m/s'},
+            {fa:'v₂ نهایی', en:'Final v₂', val:v2f.toFixed(2), u:'m/s'}
+          ];
         },
-        explain: v => `برخورد کشسان: p کل = ${(v.m1*v.v1 + v.m2*v.v2).toFixed(2)} kg·m/s محفوظ می‌ماند.`
+        explainFa: v => `p کل = ${(v.m1*v.v1+v.m2*v.v2).toFixed(2)} محفوظ است.`,
+        explainEn: v => `Total p = ${(v.m1*v.v1+v.m2*v.v2).toFixed(2)} is conserved.`
       },
       friction: {
-        name: 'اصطکاک سطح افقی',
-        formula: 'fₖ = μₖN = μₖmg   ·   a = −μₖg',
-        desc: 'نیروی اصطکاک جنبشی و مسافت توقف.',
-        fields: [['m','جرم','kg',0.5,50,0.5,5],['mu','μₖ','—',0.05,1,0.01,0.3],['v0','سرعت اولیه','m/s',1,30,0.5,10]],
+        nameFa: 'اصطکاک', nameEn: 'Friction',
+        formula: 'fₖ = μₖmg  ·  a = −μₖg  ·  s = v₀²/(2μₖg)',
+        descFa: 'نیروی اصطکاک جنبشی و مسافت توقف.',
+        descEn: 'Kinetic friction force and stopping distance.',
+        fields: [
+          {k:'m', fa:'جرم', en:'Mass', u:'kg', min:0.5, max:50, step:0.5, def:5},
+          {k:'mu', fa:'μₖ', en:'μₖ', u:'—', min:0.05, max:1, step:0.01, def:0.3},
+          {k:'v0', fa:'سرعت اولیه', en:'Initial speed', u:'m/s', min:1, max:30, step:0.5, def:10}
+        ],
         calc: v => {
           const f = v.mu * v.m * CONST.G_EARTH;
           const a = -v.mu * CONST.G_EARTH;
           const s = (v.v0 ** 2) / (2 * v.mu * CONST.G_EARTH);
-          return [['نیروی اصطکاک',f.toFixed(2),'N'],['شتاب',a.toFixed(2),'m/s²'],['مسافت توقف',s.toFixed(2),'m']];
+          return [
+            {fa:'نیروی اصطکاک', en:'Friction force', val:f.toFixed(2), u:'N'},
+            {fa:'شتاب', en:'Acceleration', val:a.toFixed(2), u:'m/s²'},
+            {fa:'مسافت توقف', en:'Stopping distance', val:s.toFixed(2), u:'m'}
+          ];
         },
-        explain: v => `با μₖ=${v.mu} و v₀=${v.v0} → مسافت توقف ${(v.v0**2/(2*v.mu*CONST.G_EARTH)).toFixed(2)} m`
+        explainFa: v => `μₖ=${v.mu}, v₀=${v.v0} → s=${(v.v0**2/(2*v.mu*CONST.G_EARTH)).toFixed(2)} m`,
+        explainEn: v => `μₖ=${v.mu}, v₀=${v.v0} → s=${(v.v0**2/(2*v.mu*CONST.G_EARTH)).toFixed(2)} m`
       },
       spring: {
-        name: 'نوسانگر هارمونیک (فنر)',
-        formula: 'T = 2π√(m/k)   ·   ω = √(k/m)   ·   E = ½kA²',
-        desc: 'دوره تناوب، بسامد زاویه‌ای و انرژی نوسانگر.',
-        fields: [['m','جرم','kg',0.1,10,0.1,1],['k','ثابت فنر','N/m',10,500,5,100],['A','دامنه','m',0.01,1,0.01,0.2]],
+        nameFa: 'نوسانگر فنر', nameEn: 'Spring oscillator',
+        formula: 'T = 2π√(m/k)  ·  ω = √(k/m)  ·  E = ½kA²',
+        descFa: 'دوره، بسامد زاویه‌ای و انرژی.',
+        descEn: 'Period, angular frequency and energy.',
+        fields: [
+          {k:'m', fa:'جرم', en:'Mass', u:'kg', min:0.1, max:10, step:0.1, def:1},
+          {k:'k', fa:'ثابت فنر', en:'Spring k', u:'N/m', min:10, max:500, step:5, def:100},
+          {k:'A', fa:'دامنه', en:'Amplitude', u:'m', min:0.01, max:1, step:0.01, def:0.2}
+        ],
         calc: v => {
           const T = 2 * Math.PI * Math.sqrt(v.m / v.k);
           const omega = Math.sqrt(v.k / v.m);
           const E = 0.5 * v.k * v.A * v.A;
-          return [['دوره تناوب',T.toFixed(3),'s'],['ω',omega.toFixed(2),'rad/s'],['انرژی کل',E.toFixed(3),'J']];
+          return [
+            {fa:'دوره تناوب', en:'Period', val:T.toFixed(3), u:'s'},
+            {fa:'ω', en:'ω', val:omega.toFixed(2), u:'rad/s'},
+            {fa:'انرژی کل', en:'Total energy', val:E.toFixed(3), u:'J'}
+          ];
         },
-        explain: v => `فنر k=${v.k} با جرم ${v.m} kg → T=${(2*Math.PI*Math.sqrt(v.m/v.k)).toFixed(3)} s`
+        explainFa: v => `k=${v.k}, m=${v.m} → T=${(2*Math.PI*Math.sqrt(v.m/v.k)).toFixed(3)} s`,
+        explainEn: v => `k=${v.k}, m=${v.m} → T=${(2*Math.PI*Math.sqrt(v.m/v.k)).toFixed(3)} s`
       },
       torque: {
-        name: 'گشتاور و تعادل',
-        formula: 'τ = r × F = rF sinθ   ·   Στ = 0 (تعادل)',
-        desc: 'گشتاور نیروی اعمال‌شده در فاصله r و زاویه θ.',
-        fields: [['F','نیرو','N',1,200,1,50],['r','بازو','m',0.1,5,0.1,1],['theta','زاویه','°',0,90,1,90]],
+        nameFa: 'گشتاور', nameEn: 'Torque',
+        formula: 'τ = r F sinθ',
+        descFa: 'گشتاور نیرو در فاصله r.',
+        descEn: 'Torque of a force at distance r.',
+        fields: [
+          {k:'F', fa:'نیرو', en:'Force', u:'N', min:1, max:200, step:1, def:50},
+          {k:'r', fa:'بازو', en:'Lever arm', u:'m', min:0.1, max:5, step:0.1, def:1},
+          {k:'theta', fa:'زاویه', en:'Angle', u:'°', min:0, max:90, step:1, def:90}
+        ],
         calc: v => {
           const tau = v.r * v.F * Math.sin(v.theta * Math.PI / 180);
-          return [['گشتاور',tau.toFixed(2),'N·m'],['مؤلفه عمود',(v.F*Math.sin(v.theta*Math.PI/180)).toFixed(2),'N'],['بازو',v.r.toFixed(2),'m']];
+          return [
+            {fa:'گشتاور', en:'Torque', val:tau.toFixed(2), u:'N·m'},
+            {fa:'مؤلفه عمود', en:'Perp. component', val:(v.F*Math.sin(v.theta*Math.PI/180)).toFixed(2), u:'N'},
+            {fa:'بازو', en:'Arm', val:v.r.toFixed(2), u:'m'}
+          ];
         },
-        explain: v => `τ = ${v.r} × ${v.F} × sin(${v.theta}°) = ${(v.r*v.F*Math.sin(v.theta*Math.PI/180)).toFixed(2)} N·m`
+        explainFa: v => `τ = ${v.r}×${v.F}×sin(${v.theta}°) = ${(v.r*v.F*Math.sin(v.theta*Math.PI/180)).toFixed(2)} N·m`,
+        explainEn: v => `τ = ${v.r}×${v.F}×sin(${v.theta}°) = ${(v.r*v.F*Math.sin(v.theta*Math.PI/180)).toFixed(2)} N·m`
       },
       density: {
-        name: 'چگالی و شناوری',
-        formula: 'ρ = m/V   ·   Fᵦ = ρ_fluid V g',
-        desc: 'چگالی جسم و نیروی شناوری در سیال.',
-        fields: [['m','جرم','kg',0.1,50,0.1,5],['V','حجم','m³',0.001,0.5,0.001,0.01],['rho_f','چگالی سیال','kg/m³',500,1500,10,1000]],
+        nameFa: 'چگالی و شناوری', nameEn: 'Density & buoyancy',
+        formula: 'ρ = m/V  ·  Fᵦ = ρ_fluid V g',
+        descFa: 'چگالی جسم و نیروی شناوری.',
+        descEn: 'Object density and buoyant force.',
+        fields: [
+          {k:'m', fa:'جرم', en:'Mass', u:'kg', min:0.1, max:50, step:0.1, def:5},
+          {k:'V', fa:'حجم', en:'Volume', u:'m³', min:0.001, max:0.5, step:0.001, def:0.01},
+          {k:'rho_f', fa:'چگالی سیال', en:'Fluid density', u:'kg/m³', min:500, max:1500, step:10, def:1000}
+        ],
         calc: v => {
           const rho = v.m / v.V;
           const Fb = v.rho_f * v.V * CONST.G_EARTH;
           const sinks = rho > v.rho_f;
-          return [['چگالی جسم',rho.toFixed(1),'kg/m³'],['نیروی شناوری',Fb.toFixed(2),'N'],['وضعیت',sinks?'فرومی‌رود':'شناور','']];
+          return [
+            {fa:'چگالی جسم', en:'Object density', val:rho.toFixed(1), u:'kg/m³'},
+            {fa:'نیروی شناوری', en:'Buoyant force', val:Fb.toFixed(2), u:'N'},
+            {fa:'وضعیت', en:'Status', val:sinks ? (document.documentElement.lang==='en'?'Sinks':'فرومی‌رود') : (document.documentElement.lang==='en'?'Floats':'شناور'), u:''}
+          ];
         },
-        explain: v => `ρ = ${(v.m/v.V).toFixed(1)} kg/m³ → ${v.m/v.V > v.rho_f ? 'فرومی‌رود' : 'شناور می‌ماند'}`
+        explainFa: v => `ρ=${(v.m/v.V).toFixed(1)} → ${v.m/v.V > v.rho_f ? 'فرومی‌رود' : 'شناور'}`,
+        explainEn: v => `ρ=${(v.m/v.V).toFixed(1)} → ${v.m/v.V > v.rho_f ? 'Sinks' : 'Floats'}`
       },
       workpower: {
-        name: 'کار و توان',
-        formula: 'W = F·d = Fd cosθ   ·   P = W/t = Fv',
-        desc: 'کار انجام‌شده و توان متوسط.',
-        fields: [['F','نیرو','N',1,500,1,100],['d','جابه‌جایی','m',0.5,50,0.5,10],['theta','زاویه','°',0,90,5,0],['t','زمان','s',0.5,60,0.5,5]],
+        nameFa: 'کار و توان', nameEn: 'Work & power',
+        formula: 'W = Fd cosθ  ·  P = W/t',
+        descFa: 'کار انجام‌شده و توان متوسط.',
+        descEn: 'Work done and average power.',
+        fields: [
+          {k:'F', fa:'نیرو', en:'Force', u:'N', min:1, max:500, step:1, def:100},
+          {k:'d', fa:'جابه‌جایی', en:'Displacement', u:'m', min:0.5, max:50, step:0.5, def:10},
+          {k:'theta', fa:'زاویه', en:'Angle', u:'°', min:0, max:90, step:5, def:0},
+          {k:'t', fa:'زمان', en:'Time', u:'s', min:0.5, max:60, step:0.5, def:5}
+        ],
         calc: v => {
           const W = v.F * v.d * Math.cos(v.theta * Math.PI / 180);
           const P = W / v.t;
-          return [['کار',W.toFixed(1),'J'],['توان',P.toFixed(1),'W'],['توان (hp)',(P/745.7).toFixed(3),'hp']];
+          return [
+            {fa:'کار', en:'Work', val:W.toFixed(1), u:'J'},
+            {fa:'توان', en:'Power', val:P.toFixed(1), u:'W'},
+            {fa:'توان (hp)', en:'Power (hp)', val:(P/745.7).toFixed(3), u:'hp'}
+          ];
         },
-        explain: v => `W = ${v.F}×${v.d}×cos(${v.theta}°) = ${(v.F*v.d*Math.cos(v.theta*Math.PI/180)).toFixed(1)} J`
+        explainFa: v => `W=${(v.F*v.d*Math.cos(v.theta*Math.PI/180)).toFixed(1)} J · P=${(v.F*v.d*Math.cos(v.theta*Math.PI/180)/v.t).toFixed(1)} W`,
+        explainEn: v => `W=${(v.F*v.d*Math.cos(v.theta*Math.PI/180)).toFixed(1)} J · P=${(v.F*v.d*Math.cos(v.theta*Math.PI/180)/v.t).toFixed(1)} W`
       }
     }
   },
 
   electric: {
-    title: 'برق و مدار',
-    icon: '⚡',
+    titleFa: 'برق و مدار', titleEn: 'Electricity', icon: '⚡',
     experiments: {
       ohm: {
-        name: 'قانون اهم ساده',
-        formula: 'I = V/R   ·   P = VI = V²/R',
-        desc: 'جریان و توان در مدار مقاومتی ساده.',
-        fields: [['v','ولتاژ','V',0.5,48,0.5,12],['r','مقاومت','Ω',1,200,1,6]],
+        nameFa: 'قانون اهم', nameEn: "Ohm's law",
+        formula: 'I = V/R  ·  P = VI = V²/R',
+        descFa: 'جریان و توان مدار مقاومتی.',
+        descEn: 'Current and power in a resistive circuit.',
+        fields: [
+          {k:'v', fa:'ولتاژ', en:'Voltage', u:'V', min:0.5, max:48, step:0.5, def:12},
+          {k:'r', fa:'مقاومت', en:'Resistance', u:'Ω', min:1, max:200, step:1, def:6}
+        ],
         calc: v => {
           const i = v.v / v.r, p = v.v * i;
-          return [['جریان',i.toFixed(3),'A'],['توان',p.toFixed(2),'W'],['مقاومت',v.r.toFixed(1),'Ω']];
+          return [
+            {fa:'جریان', en:'Current', val:i.toFixed(3), u:'A'},
+            {fa:'توان', en:'Power', val:p.toFixed(2), u:'W'},
+            {fa:'مقاومت', en:'Resistance', val:v.r.toFixed(1), u:'Ω'}
+          ];
         },
-        explain: v => `I = ${v.v}/${v.r} = ${(v.v/v.r).toFixed(3)} A · P = ${(v.v*v.v/v.r).toFixed(2)} W`
+        explainFa: v => `I=${(v.v/v.r).toFixed(3)} A · P=${(v.v*v.v/v.r).toFixed(2)} W`,
+        explainEn: v => `I=${(v.v/v.r).toFixed(3)} A · P=${(v.v*v.v/v.r).toFixed(2)} W`
       },
       series: {
-        name: 'مقاومت‌های سری',
-        formula: 'R_eq = R₁ + R₂ + R₃   ·   I = V/R_eq',
-        desc: 'مدار سری سه مقاومتی.',
-        fields: [['v','ولتاژ منبع','V',1,48,1,12],['r1','R₁','Ω',1,100,1,10],['r2','R₂','Ω',1,100,1,20],['r3','R₃','Ω',1,100,1,30]],
+        nameFa: 'مقاومت سری', nameEn: 'Series resistors',
+        formula: 'R_eq = R₁+R₂+R₃  ·  I = V/R_eq',
+        descFa: 'سه مقاومت سری.',
+        descEn: 'Three resistors in series.',
+        fields: [
+          {k:'v', fa:'ولتاژ', en:'Voltage', u:'V', min:1, max:48, step:1, def:12},
+          {k:'r1', fa:'R₁', en:'R₁', u:'Ω', min:1, max:100, step:1, def:10},
+          {k:'r2', fa:'R₂', en:'R₂', u:'Ω', min:1, max:100, step:1, def:20},
+          {k:'r3', fa:'R₃', en:'R₃', u:'Ω', min:1, max:100, step:1, def:30}
+        ],
         calc: v => {
           const Req = v.r1 + v.r2 + v.r3;
           const I = v.v / Req;
-          return [['R معادل',Req.toFixed(1),'Ω'],['جریان',I.toFixed(3),'A'],['افت ولتاژ R₁',(I*v.r1).toFixed(2),'V']];
+          return [
+            {fa:'R معادل', en:'R equivalent', val:Req.toFixed(1), u:'Ω'},
+            {fa:'جریان', en:'Current', val:I.toFixed(3), u:'A'},
+            {fa:'افت R₁', en:'Drop on R₁', val:(I*v.r1).toFixed(2), u:'V'}
+          ];
         },
-        explain: v => `R_eq = ${v.r1+v.r2+v.r3} Ω → I = ${(v.v/(v.r1+v.r2+v.r3)).toFixed(3)} A`
+        explainFa: v => `R_eq=${v.r1+v.r2+v.r3} Ω → I=${(v.v/(v.r1+v.r2+v.r3)).toFixed(3)} A`,
+        explainEn: v => `R_eq=${v.r1+v.r2+v.r3} Ω → I=${(v.v/(v.r1+v.r2+v.r3)).toFixed(3)} A`
       },
       parallel: {
-        name: 'مقاومت‌های موازی',
-        formula: '1/R_eq = 1/R₁ + 1/R₂   ·   I_total = V/R_eq',
-        desc: 'دو مقاومت موازی.',
-        fields: [['v','ولتاژ','V',1,48,1,12],['r1','R₁','Ω',1,200,1,10],['r2','R₂','Ω',1,200,1,20]],
+        nameFa: 'مقاومت موازی', nameEn: 'Parallel resistors',
+        formula: '1/R_eq = 1/R₁ + 1/R₂',
+        descFa: 'دو مقاومت موازی.',
+        descEn: 'Two resistors in parallel.',
+        fields: [
+          {k:'v', fa:'ولتاژ', en:'Voltage', u:'V', min:1, max:48, step:1, def:12},
+          {k:'r1', fa:'R₁', en:'R₁', u:'Ω', min:1, max:200, step:1, def:10},
+          {k:'r2', fa:'R₂', en:'R₂', u:'Ω', min:1, max:200, step:1, def:20}
+        ],
         calc: v => {
           const Req = 1 / (1/v.r1 + 1/v.r2);
           const It = v.v / Req;
-          return [['R معادل',Req.toFixed(2),'Ω'],['جریان کل',It.toFixed(3),'A'],['جریان R₁',(v.v/v.r1).toFixed(3),'A']];
+          return [
+            {fa:'R معادل', en:'R equivalent', val:Req.toFixed(2), u:'Ω'},
+            {fa:'جریان کل', en:'Total current', val:It.toFixed(3), u:'A'},
+            {fa:'جریان R₁', en:'Current R₁', val:(v.v/v.r1).toFixed(3), u:'A'}
+          ];
         },
-        explain: v => `R_eq = ${(1/(1/v.r1+1/v.r2)).toFixed(2)} Ω`
+        explainFa: v => `R_eq=${(1/(1/v.r1+1/v.r2)).toFixed(2)} Ω`,
+        explainEn: v => `R_eq=${(1/(1/v.r1+1/v.r2)).toFixed(2)} Ω`
       },
       capacitor: {
-        name: 'خازن و شارژ',
-        formula: 'Q = CV   ·   E = ½CV²   ·   τ = RC',
-        desc: 'بار، انرژی ذخیره‌شده و ثابت زمانی RC.',
-        fields: [['c','ظرفیت','μF',0.1,1000,0.1,100],['v','ولتاژ','V',1,50,1,12],['r','مقاومت سری','Ω',100,10000,100,1000]],
+        nameFa: 'خازن', nameEn: 'Capacitor',
+        formula: 'Q = CV  ·  E = ½CV²  ·  τ = RC',
+        descFa: 'بار، انرژی و ثابت زمانی.',
+        descEn: 'Charge, energy and time constant.',
+        fields: [
+          {k:'c', fa:'ظرفیت', en:'Capacitance', u:'μF', min:0.1, max:1000, step:0.1, def:100},
+          {k:'v', fa:'ولتاژ', en:'Voltage', u:'V', min:1, max:50, step:1, def:12},
+          {k:'r', fa:'مقاومت', en:'Resistance', u:'Ω', min:100, max:10000, step:100, def:1000}
+        ],
         calc: v => {
           const C = v.c * 1e-6;
           const Q = C * v.v;
           const E = 0.5 * C * v.v * v.v;
           const tau = v.r * C;
-          return [['بار', (Q*1e6).toFixed(2),'μC'],['انرژی',(E*1000).toFixed(3),'mJ'],['τ', (tau*1000).toFixed(2),'ms']];
+          return [
+            {fa:'بار', en:'Charge', val:(Q*1e6).toFixed(2), u:'μC'},
+            {fa:'انرژی', en:'Energy', val:(E*1000).toFixed(3), u:'mJ'},
+            {fa:'τ', en:'τ', val:(tau*1000).toFixed(2), u:'ms'}
+          ];
         },
-        explain: v => `C=${v.c} μF در ${v.v} V → E = ${(0.5*v.c*1e-6*v.v*v.v*1000).toFixed(3)} mJ`
+        explainFa: v => `C=${v.c} μF @ ${v.v} V → E=${(0.5*v.c*1e-6*v.v*v.v*1000).toFixed(3)} mJ`,
+        explainEn: v => `C=${v.c} μF @ ${v.v} V → E=${(0.5*v.c*1e-6*v.v*v.v*1000).toFixed(3)} mJ`
       },
       coulomb: {
-        name: 'قانون کولن',
-        formula: 'F = k|q₁q₂|/r²   ·   k = 8.99×10⁹',
-        desc: 'نیروی الکترواستاتیک بین دو بار نقطه‌ای.',
-        fields: [['q1','بار ۱','μC',-50,50,0.5,5],['q2','بار ۲','μC',-50,50,0.5,-3],['r','فاصله','cm',1,100,1,10]],
+        nameFa: 'قانون کولن', nameEn: "Coulomb's law",
+        formula: 'F = k|q₁q₂|/r²',
+        descFa: 'نیروی بین دو بار نقطه‌ای.',
+        descEn: 'Force between two point charges.',
+        fields: [
+          {k:'q1', fa:'بار ۱', en:'Charge 1', u:'μC', min:-50, max:50, step:0.5, def:5},
+          {k:'q2', fa:'بار ۲', en:'Charge 2', u:'μC', min:-50, max:50, step:0.5, def:-3},
+          {k:'r', fa:'فاصله', en:'Distance', u:'cm', min:1, max:100, step:1, def:10}
+        ],
         calc: v => {
-          const k = 8.9875517923e9;
-          const F = k * Math.abs(v.q1 * 1e-6 * v.q2 * 1e-6) / ((v.r/100)**2);
-          const attr = (v.q1 * v.q2) < 0 ? 'ربایش' : 'رانش';
-          return [['نیرو',F.toFixed(3),'N'],['نوع',attr,''],['فاصله',v.r.toFixed(0),'cm']];
+          const F = CONST.K_COULOMB * Math.abs(v.q1*1e-6 * v.q2*1e-6) / ((v.r/100)**2);
+          const attr = (v.q1*v.q2) < 0;
+          return [
+            {fa:'نیرو', en:'Force', val:F.toFixed(3), u:'N'},
+            {fa:'نوع', en:'Type', val:attr?'ربایش':'رانش', u:''},
+            {fa:'فاصله', en:'Distance', val:v.r.toFixed(0), u:'cm'}
+          ];
         },
-        explain: v => `F = k|q₁q₂|/r² = ${(8.99e9*Math.abs(v.q1*1e-6*v.q2*1e-6)/((v.r/100)**2)).toFixed(3)} N`
+        explainFa: v => `F=${(CONST.K_COULOMB*Math.abs(v.q1*1e-6*v.q2*1e-6)/((v.r/100)**2)).toFixed(3)} N`,
+        explainEn: v => `F=${(CONST.K_COULOMB*Math.abs(v.q1*1e-6*v.q2*1e-6)/((v.r/100)**2)).toFixed(3)} N`
       },
       magnetic: {
-        name: 'نیروی لورنتس',
-        formula: 'F = qvB sinθ   ·   r = mv/(qB)',
-        desc: 'نیروی مغناطیسی روی بار متحرک و شعاع مسیر.',
-        fields: [['q','بار','e',1,10,1,1],['v','سرعت','m/s',1e3,1e7,1e3,1e5],['B','میدان B','T',0.01,5,0.01,0.5],['theta','زاویه','°',0,90,5,90]],
+        nameFa: 'نیروی لورنتس', nameEn: 'Lorentz force',
+        formula: 'F = qvB sinθ  ·  r = mv/(qB)',
+        descFa: 'نیروی مغناطیسی روی بار متحرک.',
+        descEn: 'Magnetic force on a moving charge.',
+        fields: [
+          {k:'q', fa:'بار', en:'Charge', u:'e', min:1, max:10, step:1, def:1},
+          {k:'v', fa:'سرعت', en:'Speed', u:'m/s', min:1e3, max:1e7, step:1e3, def:1e5},
+          {k:'B', fa:'میدان B', en:'B field', u:'T', min:0.01, max:5, step:0.01, def:0.5},
+          {k:'theta', fa:'زاویه', en:'Angle', u:'°', min:0, max:90, step:5, def:90}
+        ],
         calc: v => {
           const q = v.q * CONST.E;
           const F = q * v.v * v.B * Math.sin(v.theta * Math.PI / 180);
           const r = (CONST.M_E * v.v) / (q * v.B);
-          return [['نیرو',F.toExponential(3),'N'],['شعاع مسیر',r.toExponential(3),'m'],['sinθ',Math.sin(v.theta*Math.PI/180).toFixed(3),'']];
+          return [
+            {fa:'نیرو', en:'Force', val:F.toExponential(3), u:'N'},
+            {fa:'شعاع مسیر', en:'Path radius', val:r.toExponential(3), u:'m'},
+            {fa:'sinθ', en:'sinθ', val:Math.sin(v.theta*Math.PI/180).toFixed(3), u:''}
+          ];
         },
-        explain: v => `F = qvB sinθ برای الکترون با v=${v.v} m/s در B=${v.B} T`
+        explainFa: v => `F=qvBsinθ برای v=${v.v} در B=${v.B} T`,
+        explainEn: v => `F=qvBsinθ for v=${v.v} in B=${v.B} T`
       },
       transformer: {
-        name: 'ترانسفورماتور ایده‌آل',
-        formula: 'Vₛ/Vₚ = Nₛ/Nₚ   ·   Iₚ/Iₛ = Nₛ/Nₚ',
-        desc: 'نسبت ولتاژ و جریان در ترانسفورماتور.',
-        fields: [['vp','ولتاژ اولیه','V',50,500,10,220],['np','دور اولیه','—',50,1000,10,200],['ns','دور ثانویه','—',10,2000,10,100]],
+        nameFa: 'ترانسفورماتور', nameEn: 'Transformer',
+        formula: 'Vₛ/Vₚ = Nₛ/Nₚ',
+        descFa: 'نسبت ولتاژ ایده‌آل.',
+        descEn: 'Ideal voltage ratio.',
+        fields: [
+          {k:'vp', fa:'ولتاژ اولیه', en:'Primary V', u:'V', min:50, max:500, step:10, def:220},
+          {k:'np', fa:'دور اولیه', en:'Primary turns', u:'—', min:50, max:1000, step:10, def:200},
+          {k:'ns', fa:'دور ثانویه', en:'Secondary turns', u:'—', min:10, max:2000, step:10, def:100}
+        ],
         calc: v => {
           const vs = v.vp * (v.ns / v.np);
           const ratio = v.ns / v.np;
-          return [['ولتاژ ثانویه',vs.toFixed(1),'V'],['نسبت دور',ratio.toFixed(3),''],['نوع',ratio>1?'افزاینده':'کاهنده','']];
+          return [
+            {fa:'ولتاژ ثانویه', en:'Secondary V', val:vs.toFixed(1), u:'V'},
+            {fa:'نسبت دور', en:'Turns ratio', val:ratio.toFixed(3), u:''},
+            {fa:'نوع', en:'Type', val:ratio>1?'افزاینده':'کاهنده', u:''}
+          ];
         },
-        explain: v => `Vₛ = ${v.vp} × (${v.ns}/${v.np}) = ${(v.vp*v.ns/v.np).toFixed(1)} V`
+        explainFa: v => `Vₛ=${(v.vp*v.ns/v.np).toFixed(1)} V`,
+        explainEn: v => `Vₛ=${(v.vp*v.ns/v.np).toFixed(1)} V`
       },
       rlc: {
-        name: 'مدار RLC سری (رزونانس)',
-        formula: 'f₀ = 1/(2π√(LC))   ·   Z = √(R²+(X_L−X_C)²)',
-        desc: 'فرکانس تشدید و امپدانس مدار RLC.',
-        fields: [['r','R','Ω',1,500,1,50],['l','L','mH',0.1,100,0.1,10],['c','C','μF',0.01,100,0.01,1],['f','فرکانس','Hz',10,5000,10,500]],
+        nameFa: 'مدار RLC', nameEn: 'RLC circuit',
+        formula: 'f₀ = 1/(2π√LC)  ·  Z = √[R²+(X_L−X_C)²]',
+        descFa: 'فرکانس تشدید و امپدانس.',
+        descEn: 'Resonant frequency and impedance.',
+        fields: [
+          {k:'r', fa:'R', en:'R', u:'Ω', min:1, max:500, step:1, def:50},
+          {k:'l', fa:'L', en:'L', u:'mH', min:0.1, max:100, step:0.1, def:10},
+          {k:'c', fa:'C', en:'C', u:'μF', min:0.01, max:100, step:0.01, def:1},
+          {k:'f', fa:'فرکانس', en:'Frequency', u:'Hz', min:10, max:5000, step:10, def:500}
+        ],
         calc: v => {
-          const L = v.l * 1e-3, C = v.c * 1e-6;
-          const f0 = 1 / (2 * Math.PI * Math.sqrt(L * C));
-          const XL = 2 * Math.PI * v.f * L;
-          const XC = 1 / (2 * Math.PI * v.f * C);
-          const Z = Math.sqrt(v.r ** 2 + (XL - XC) ** 2);
-          return [['f₀ تشدید',f0.toFixed(1),'Hz'],['امپدانس Z',Z.toFixed(1),'Ω'],['X_L − X_C',(XL-XC).toFixed(1),'Ω']];
+          const L = v.l*1e-3, C = v.c*1e-6;
+          const f0 = 1 / (2*Math.PI*Math.sqrt(L*C));
+          const XL = 2*Math.PI*v.f*L;
+          const XC = 1 / (2*Math.PI*v.f*C);
+          const Z = Math.sqrt(v.r**2 + (XL-XC)**2);
+          return [
+            {fa:'f₀ تشدید', en:'Resonant f₀', val:f0.toFixed(1), u:'Hz'},
+            {fa:'امپدانس Z', en:'Impedance Z', val:Z.toFixed(1), u:'Ω'},
+            {fa:'X_L−X_C', en:'X_L−X_C', val:(XL-XC).toFixed(1), u:'Ω'}
+          ];
         },
-        explain: v => `f₀ = 1/(2π√LC) ≈ ${(1/(2*Math.PI*Math.sqrt(v.l*1e-3*v.c*1e-6))).toFixed(1)} Hz`
+        explainFa: v => `f₀≈${(1/(2*Math.PI*Math.sqrt(v.l*1e-3*v.c*1e-6))).toFixed(1)} Hz`,
+        explainEn: v => `f₀≈${(1/(2*Math.PI*Math.sqrt(v.l*1e-3*v.c*1e-6))).toFixed(1)} Hz`
       },
       powerfactor: {
-        name: 'ضریب توان',
-        formula: 'PF = cosφ = P/S   ·   Q = √(S²−P²)',
-        desc: 'توان حقیقی، ظاهری و راکتیو.',
-        fields: [['P','توان حقیقی','W',10,5000,10,1000],['S','توان ظاهری','VA',10,6000,10,1200]],
+        nameFa: 'ضریب توان', nameEn: 'Power factor',
+        formula: 'PF = cosφ = P/S  ·  Q = √(S²−P²)',
+        descFa: 'توان حقیقی، ظاهری و راکتیو.',
+        descEn: 'Real, apparent and reactive power.',
+        fields: [
+          {k:'P', fa:'توان حقیقی', en:'Real power', u:'W', min:10, max:5000, step:10, def:1000},
+          {k:'S', fa:'توان ظاهری', en:'Apparent power', u:'VA', min:10, max:6000, step:10, def:1200}
+        ],
         calc: v => {
           const pf = Math.min(1, v.P / v.S);
-          const Q = Math.sqrt(Math.max(0, v.S ** 2 - v.P ** 2));
+          const Q = Math.sqrt(Math.max(0, v.S**2 - v.P**2));
           const phi = Math.acos(pf) * 180 / Math.PI;
-          return [['ضریب توان',pf.toFixed(3),''],['توان راکتیو',Q.toFixed(1),'VAR'],['زاویه φ',phi.toFixed(1),'°']];
+          return [
+            {fa:'ضریب توان', en:'Power factor', val:pf.toFixed(3), u:''},
+            {fa:'توان راکتیو', en:'Reactive power', val:Q.toFixed(1), u:'VAR'},
+            {fa:'زاویه φ', en:'Angle φ', val:phi.toFixed(1), u:'°'}
+          ];
         },
-        explain: v => `PF = ${v.P}/${v.S} = ${(v.P/v.S).toFixed(3)}`
+        explainFa: v => `PF=${(v.P/v.S).toFixed(3)}`,
+        explainEn: v => `PF=${(v.P/v.S).toFixed(3)}`
       },
       kirchhoff: {
-        name: 'قوانین کیرشهف (حلقه)',
-        formula: 'ΣV = 0   ·   ΣI = 0',
-        desc: 'ولتاژ و جریان در مدار ساده دو حلقه‌ای (تقریبی).',
-        fields: [['v1','منبع ۱','V',1,30,1,12],['v2','منبع ۲','V',1,30,1,6],['r1','R₁','Ω',1,50,1,10],['r2','R₂','Ω',1,50,1,15]],
+        nameFa: 'کیرشهف', nameEn: 'Kirchhoff',
+        formula: 'ΣV = 0  ·  ΣI = 0',
+        descFa: 'جریان در حلقه ساده.',
+        descEn: 'Current in a simple loop.',
+        fields: [
+          {k:'v1', fa:'منبع ۱', en:'Source 1', u:'V', min:1, max:30, step:1, def:12},
+          {k:'v2', fa:'منبع ۲', en:'Source 2', u:'V', min:1, max:30, step:1, def:6},
+          {k:'r1', fa:'R₁', en:'R₁', u:'Ω', min:1, max:50, step:1, def:10},
+          {k:'r2', fa:'R₂', en:'R₂', u:'Ω', min:1, max:50, step:1, def:15}
+        ],
         calc: v => {
-          // Simple mesh: I ≈ (V1-V2)/(R1+R2) for opposing sources
           const I = (v.v1 - v.v2) / (v.r1 + v.r2);
-          return [['جریان حلقه',I.toFixed(3),'A'],['افت روی R₁',(Math.abs(I)*v.r1).toFixed(2),'V'],['افت روی R₂',(Math.abs(I)*v.r2).toFixed(2),'V']];
+          return [
+            {fa:'جریان حلقه', en:'Loop current', val:I.toFixed(3), u:'A'},
+            {fa:'افت R₁', en:'Drop R₁', val:(Math.abs(I)*v.r1).toFixed(2), u:'V'},
+            {fa:'افت R₂', en:'Drop R₂', val:(Math.abs(I)*v.r2).toFixed(2), u:'V'}
+          ];
         },
-        explain: v => `با فرض منابع مخالف: I ≈ (${v.v1}−${v.v2})/(${v.r1}+${v.r2}) = ${((v.v1-v.v2)/(v.r1+v.r2)).toFixed(3)} A`
+        explainFa: v => `I≈${((v.v1-v.v2)/(v.r1+v.r2)).toFixed(3)} A`,
+        explainEn: v => `I≈${((v.v1-v.v2)/(v.r1+v.r2)).toFixed(3)} A`
       }
     }
   },
 
+  // Energy formulas verified:
+  // Ek=0.5mv^2, Ep=mgh                                    ✓
+  // freefall conversion v=√(2gh)                          ✓
+  // spring U=0.5kx^2                                      ✓
+  // power P=Fv                                            ✓
+  // efficiency η=Wout/Ein                                 ✓
+  // pendulum T=2π√(L/g)                                   ✓
+  // gravity U=-GMm/r , g=GM/r^2                           ✓
+  // inelastic KE loss with coefficient of restitution     ✓
+  // heat Q=Fd , ΔT=Q/(mc)                                 ✓
+  // orbital E=-GMm/(2a)                                   ✓
   energy: {
-    title: 'انرژی مکانیکی',
-    icon: '🔋',
+    titleFa: 'انرژی مکانیکی', titleEn: 'Mechanical Energy', icon: '🔋',
     experiments: {
       kinetic_potential: {
-        name: 'انرژی جنبشی و پتانسیل',
-        formula: 'Eₖ = ½mv²   ·   Eₚ = mgh   ·   E = Eₖ+Eₚ',
-        desc: 'مقایسه انرژی جنبشی و پتانسیل گرانشی.',
-        fields: [['m','جرم','kg',0.1,100,0.5,5],['v','سرعت','m/s',0,50,0.5,10],['h','ارتفاع','m',0,100,1,8]],
+        nameFa: 'جنبشی و پتانسیل', nameEn: 'Kinetic & potential',
+        formula: 'Eₖ = ½mv²  ·  Eₚ = mgh  ·  E = Eₖ+Eₚ',
+        descFa: 'مقایسه انرژی جنبشی و پتانسیل.',
+        descEn: 'Compare kinetic and potential energy.',
+        fields: [
+          {k:'m', fa:'جرم', en:'Mass', u:'kg', min:0.1, max:100, step:0.5, def:5},
+          {k:'v', fa:'سرعت', en:'Speed', u:'m/s', min:0, max:50, step:0.5, def:10},
+          {k:'h', fa:'ارتفاع', en:'Height', u:'m', min:0, max:100, step:1, def:8}
+        ],
         calc: v => {
           const k = 0.5 * v.m * v.v * v.v;
           const p = v.m * CONST.G_EARTH * v.h;
-          return [['Eₖ',k.toFixed(2),'J'],['Eₚ',p.toFixed(2),'J'],['کل',(k+p).toFixed(2),'J']];
+          return [
+            {fa:'Eₖ', en:'Eₖ', val:k.toFixed(2), u:'J'},
+            {fa:'Eₚ', en:'Eₚ', val:p.toFixed(2), u:'J'},
+            {fa:'کل', en:'Total', val:(k+p).toFixed(2), u:'J'}
+          ];
         },
-        explain: v => `E کل = ${(0.5*v.m*v.v*v.v + v.m*CONST.G_EARTH*v.h).toFixed(2)} J`
+        explainFa: v => `E کل = ${(0.5*v.m*v.v*v.v + v.m*CONST.G_EARTH*v.h).toFixed(2)} J`,
+        explainEn: v => `Total E = ${(0.5*v.m*v.v*v.v + v.m*CONST.G_EARTH*v.h).toFixed(2)} J`
       },
       conservation: {
-        name: 'پایستگی انرژی (سرسره)',
+        nameFa: 'پایستگی انرژی', nameEn: 'Energy conservation',
         formula: 'mgh = ½mv² → v = √(2gh)',
-        desc: 'تبدیل انرژی پتانسیل به جنبشی بدون اصطکاک.',
-        fields: [['h','ارتفاع اولیه','m',1,100,1,20],['g','g','m/s²',5,15,0.1,9.81]],
+        descFa: 'تبدیل پتانسیل به جنبشی.',
+        descEn: 'Potential to kinetic conversion.',
+        fields: [
+          {k:'h', fa:'ارتفاع', en:'Height', u:'m', min:1, max:100, step:1, def:20},
+          {k:'g', fa:'g', en:'g', u:'m/s²', min:5, max:15, step:0.1, def:9.81}
+        ],
         calc: v => {
           const vel = Math.sqrt(2 * v.g * v.h);
-          const Ep = 1 * v.g * v.h; // per unit mass
-          return [['سرعت پایین',vel.toFixed(2),'m/s'],['Eₚ اولیه',Ep.toFixed(2),'J/kg'],['Eₖ نهایی',Ep.toFixed(2),'J/kg']];
+          const Ep = v.g * v.h;
+          return [
+            {fa:'سرعت پایین', en:'Bottom speed', val:vel.toFixed(2), u:'m/s'},
+            {fa:'Eₚ اولیه', en:'Initial Eₚ', val:Ep.toFixed(2), u:'J/kg'},
+            {fa:'Eₖ نهایی', en:'Final Eₖ', val:Ep.toFixed(2), u:'J/kg'}
+          ];
         },
-        explain: v => `از ارتفاع ${v.h} m → v = √(2gh) = ${Math.sqrt(2*v.g*v.h).toFixed(2)} m/s`
+        explainFa: v => `از ${v.h} m → v=√(2gh)=${Math.sqrt(2*v.g*v.h).toFixed(2)} m/s`,
+        explainEn: v => `From ${v.h} m → v=√(2gh)=${Math.sqrt(2*v.g*v.h).toFixed(2)} m/s`
       },
       elastic: {
-        name: 'انرژی کشسانی فنر',
-        formula: 'U = ½kx²   ·   F = −kx',
-        desc: 'انرژی ذخیره‌شده در فنر فشرده/کشیده.',
-        fields: [['k','ثابت فنر','N/m',10,1000,10,200],['x','تغییر طول','m',0.01,1,0.01,0.15]],
+        nameFa: 'انرژی فنر', nameEn: 'Spring energy',
+        formula: 'U = ½kx²  ·  F = −kx',
+        descFa: 'انرژی ذخیره‌شده در فنر.',
+        descEn: 'Energy stored in a spring.',
+        fields: [
+          {k:'k', fa:'ثابت فنر', en:'Spring k', u:'N/m', min:10, max:1000, step:10, def:200},
+          {k:'x', fa:'تغییر طول', en:'Extension', u:'m', min:0.01, max:1, step:0.01, def:0.15}
+        ],
         calc: v => {
           const U = 0.5 * v.k * v.x * v.x;
           const F = v.k * v.x;
-          return [['انرژی کشسانی',U.toFixed(3),'J'],['نیروی فنر',F.toFixed(2),'N'],['x',v.x.toFixed(3),'m']];
+          return [
+            {fa:'انرژی کشسانی', en:'Elastic energy', val:U.toFixed(3), u:'J'},
+            {fa:'نیروی فنر', en:'Spring force', val:F.toFixed(2), u:'N'},
+            {fa:'x', en:'x', val:v.x.toFixed(3), u:'m'}
+          ];
         },
-        explain: v => `U = ½×${v.k}×${v.x}² = ${(0.5*v.k*v.x*v.x).toFixed(3)} J`
+        explainFa: v => `U=½×${v.k}×${v.x}²=${(0.5*v.k*v.x*v.x).toFixed(3)} J`,
+        explainEn: v => `U=½×${v.k}×${v.x}²=${(0.5*v.k*v.x*v.x).toFixed(3)} J`
       },
       power_mech: {
-        name: 'توان مکانیکی',
-        formula: 'P = Fv = τω   ·   P = W/t',
-        desc: 'توان لحظه‌ای و متوسط.',
-        fields: [['F','نیرو','N',1,1000,1,200],['v','سرعت','m/s',0.1,30,0.1,5],['t','زمان','s',0.5,60,0.5,10]],
+        nameFa: 'توان مکانیکی', nameEn: 'Mechanical power',
+        formula: 'P = Fv  ·  P = W/t',
+        descFa: 'توان لحظه‌ای.',
+        descEn: 'Instantaneous power.',
+        fields: [
+          {k:'F', fa:'نیرو', en:'Force', u:'N', min:1, max:1000, step:1, def:200},
+          {k:'v', fa:'سرعت', en:'Speed', u:'m/s', min:0.1, max:30, step:0.1, def:5},
+          {k:'t', fa:'زمان', en:'Time', u:'s', min:0.5, max:60, step:0.5, def:10}
+        ],
         calc: v => {
           const P = v.F * v.v;
           const W = P * v.t;
-          return [['توان',P.toFixed(1),'W'],['کار',W.toFixed(0),'J'],['توان (kW)',(P/1000).toFixed(3),'kW']];
+          return [
+            {fa:'توان', en:'Power', val:P.toFixed(1), u:'W'},
+            {fa:'کار', en:'Work', val:W.toFixed(0), u:'J'},
+            {fa:'توان (kW)', en:'Power (kW)', val:(P/1000).toFixed(3), u:'kW'}
+          ];
         },
-        explain: v => `P = ${v.F}×${v.v} = ${(v.F*v.v).toFixed(1)} W`
+        explainFa: v => `P=${v.F}×${v.v}=${(v.F*v.v).toFixed(1)} W`,
+        explainEn: v => `P=${v.F}×${v.v}=${(v.F*v.v).toFixed(1)} W`
       },
       efficiency: {
-        name: 'بازده ماشین',
+        nameFa: 'بازده', nameEn: 'Efficiency',
         formula: 'η = W_out / E_in × 100%',
-        desc: 'بازده انرژی و توان خروجی مفید.',
-        fields: [['Ein','انرژی ورودی','J',100,10000,50,2000],['Wout','کار مفید','J',50,9000,50,1200]],
+        descFa: 'بازده ماشین.',
+        descEn: 'Machine efficiency.',
+        fields: [
+          {k:'Ein', fa:'انرژی ورودی', en:'Input energy', u:'J', min:100, max:10000, step:50, def:2000},
+          {k:'Wout', fa:'کار مفید', en:'Useful work', u:'J', min:50, max:9000, step:50, def:1200}
+        ],
         calc: v => {
           const eta = Math.min(100, (v.Wout / v.Ein) * 100);
           const loss = v.Ein - v.Wout;
-          return [['بازده',eta.toFixed(1),'%'],['اتلاف',loss.toFixed(0),'J'],['نسبت', (v.Wout/v.Ein).toFixed(3),'']];
+          return [
+            {fa:'بازده', en:'Efficiency', val:eta.toFixed(1), u:'%'},
+            {fa:'اتلاف', en:'Loss', val:loss.toFixed(0), u:'J'},
+            {fa:'نسبت', en:'Ratio', val:(v.Wout/v.Ein).toFixed(3), u:''}
+          ];
         },
-        explain: v => `η = ${v.Wout}/${v.Ein} = ${((v.Wout/v.Ein)*100).toFixed(1)}%`
+        explainFa: v => `η=${((v.Wout/v.Ein)*100).toFixed(1)}%`,
+        explainEn: v => `η=${((v.Wout/v.Ein)*100).toFixed(1)}%`
       },
       pendulum: {
-        name: 'آونگ ساده',
-        formula: 'T = 2π√(L/g)   ·   E ≈ mgLθ²/2 (کوچک)',
-        desc: 'دوره تناوب آونگ ساده برای زاویه کوچک.',
-        fields: [['L','طول','m',0.1,5,0.05,1],['g','g','m/s²',5,15,0.1,9.81],['theta','زاویه بیشینه','°',1,30,1,15]],
+        nameFa: 'آونگ ساده', nameEn: 'Simple pendulum',
+        formula: 'T = 2π√(L/g)',
+        descFa: 'دوره تناوب آونگ (زاویه کوچک).',
+        descEn: 'Pendulum period (small angle).',
+        fields: [
+          {k:'L', fa:'طول', en:'Length', u:'m', min:0.1, max:5, step:0.05, def:1},
+          {k:'g', fa:'g', en:'g', u:'m/s²', min:5, max:15, step:0.1, def:9.81},
+          {k:'theta', fa:'زاویه بیشینه', en:'Max angle', u:'°', min:1, max:30, step:1, def:15}
+        ],
         calc: v => {
           const T = 2 * Math.PI * Math.sqrt(v.L / v.g);
           const th = v.theta * Math.PI / 180;
-          const E = 0.5 * 1 * v.g * v.L * th * th; // per unit mass approx
-          return [['دوره تناوب',T.toFixed(3),'s'],['فرکانس',(1/T).toFixed(3),'Hz'],['انرژی تقریبی',E.toFixed(4),'J/kg']];
+          const E = 0.5 * v.g * v.L * th * th;
+          return [
+            {fa:'دوره تناوب', en:'Period', val:T.toFixed(3), u:'s'},
+            {fa:'فرکانس', en:'Frequency', val:(1/T).toFixed(3), u:'Hz'},
+            {fa:'انرژی تقریبی', en:'Approx. energy', val:E.toFixed(4), u:'J/kg'}
+          ];
         },
-        explain: v => `T = 2π√(${v.L}/${v.g}) = ${(2*Math.PI*Math.sqrt(v.L/v.g)).toFixed(3)} s`
+        explainFa: v => `T=2π√(${v.L}/${v.g})=${(2*Math.PI*Math.sqrt(v.L/v.g)).toFixed(3)} s`,
+        explainEn: v => `T=2π√(${v.L}/${v.g})=${(2*Math.PI*Math.sqrt(v.L/v.g)).toFixed(3)} s`
       },
       gravity_pe: {
-        name: 'پتانسیل گرانشی عمومی',
-        formula: 'U = −GMm/r   ·   g = GM/r²',
-        desc: 'انرژی پتانسیل گرانشی و شتاب در فاصله r از جرم M.',
-        fields: [['M','جرم مرکزی','M⊕',0.1,100,0.1,1],['r','فاصله','R⊕',1,20,0.1,2],['m','جرم آزمون','kg',1,1000,1,10]],
+        nameFa: 'پتانسیل گرانشی', nameEn: 'Gravitational PE',
+        formula: 'U = −GMm/r  ·  g = GM/r²',
+        descFa: 'پتانسیل و شتاب در فاصله r.',
+        descEn: 'Potential and g at distance r.',
+        fields: [
+          {k:'M', fa:'جرم مرکزی', en:'Central mass', u:'M⊕', min:0.1, max:100, step:0.1, def:1},
+          {k:'r', fa:'فاصله', en:'Distance', u:'R⊕', min:1, max:20, step:0.1, def:2},
+          {k:'m', fa:'جرم آزمون', en:'Test mass', u:'kg', min:1, max:1000, step:1, def:10}
+        ],
         calc: v => {
           const M = v.M * CONST.M_EARTH;
           const r = v.r * CONST.R_EARTH;
           const U = -CONST.G * M * v.m / r;
           const g = CONST.G * M / (r * r);
-          return [['U',U.toExponential(3),'J'],['g محلی',g.toFixed(3),'m/s²'],['r',(r/1000).toFixed(0),'km']];
+          return [
+            {fa:'U', en:'U', val:U.toExponential(3), u:'J'},
+            {fa:'g محلی', en:'Local g', val:g.toFixed(3), u:'m/s²'},
+            {fa:'r', en:'r', val:(r/1000).toFixed(0), u:'km'}
+          ];
         },
-        explain: v => `در فاصله ${v.r} R⊕ از جرم ${v.M} M⊕ → g = ${(CONST.G*v.M*CONST.M_EARTH/(v.r*CONST.R_EARTH)**2).toFixed(3)} m/s²`
+        explainFa: v => `در ${v.r} R⊕ → g=${(CONST.G*v.M*CONST.M_EARTH/(v.r*CONST.R_EARTH)**2).toFixed(3)} m/s²`,
+        explainEn: v => `At ${v.r} R⊕ → g=${(CONST.G*v.M*CONST.M_EARTH/(v.r*CONST.R_EARTH)**2).toFixed(3)} m/s²`
       },
       collision_energy: {
-        name: 'اتلاف انرژی در برخورد',
-        formula: 'e = (v₂′−v₁′)/(v₁−v₂)   ·   KE_loss',
-        desc: 'ضریب بازگشت و انرژی از دست‌رفته در برخورد.',
-        fields: [['m1','جرم ۱','kg',0.5,20,0.5,2],['v1','سرعت ۱','m/s',1,20,0.5,8],['m2','جرم ۲','kg',0.5,20,0.5,4],['e','ضریب e','—',0,1,0.05,0.6]],
+        nameFa: 'اتلاف در برخورد', nameEn: 'Collision energy loss',
+        formula: 'e = (v₂′−v₁′)/(v₁−v₂)  ·  KE loss',
+        descFa: 'ضریب بازگشت و انرژی از دست‌رفته.',
+        descEn: 'Coefficient of restitution and lost KE.',
+        fields: [
+          {k:'m1', fa:'جرم ۱', en:'Mass 1', u:'kg', min:0.5, max:20, step:0.5, def:2},
+          {k:'v1', fa:'سرعت ۱', en:'Velocity 1', u:'m/s', min:1, max:20, step:0.5, def:8},
+          {k:'m2', fa:'جرم ۲', en:'Mass 2', u:'kg', min:0.5, max:20, step:0.5, def:4},
+          {k:'e', fa:'ضریب e', en:'Coeff. e', u:'—', min:0, max:1, step:0.05, def:0.6}
+        ],
         calc: v => {
+          const KEi = 0.5 * v.m1 * v.v1 * v.v1;
+          const v1f = ((v.m1 - v.e * v.m2) * v.v1) / (v.m1 + v.m2);
+          const v2f = ((1 + v.e) * v.m1 * v.v1) / (v.m1 + v.m2);
+          const KEf = 0.5 * v.m1 * v1f * v1f + 0.5 * v.m2 * v2f * v2f;
+          return [
+            {fa:'KE اولیه', en:'Initial KE', val:KEi.toFixed(2), u:'J'},
+            {fa:'KE نهایی', en:'Final KE', val:KEf.toFixed(2), u:'J'},
+            {fa:'اتلاف', en:'Loss', val:(KEi - KEf).toFixed(2), u:'J'}
+          ];
+        },
+        explainFa: v => {
           const KEi = 0.5*v.m1*v.v1*v.v1;
-          // assume m2 at rest
-          const v1f = ((v.m1 - v.e*v.m2)*v.v1)/(v.m1+v.m2);
+          const v1f = ((v.m1-v.e*v.m2)*v.v1)/(v.m1+v.m2);
           const v2f = ((1+v.e)*v.m1*v.v1)/(v.m1+v.m2);
           const KEf = 0.5*v.m1*v1f*v1f + 0.5*v.m2*v2f*v2f;
-          return [['KE اولیه',KEi.toFixed(2),'J'],['KE نهایی',KEf.toFixed(2),'J'],['اتلاف',(KEi-KEf).toFixed(2),'J']];
+          return `e=${v.e} → اتلاف ${(KEi-KEf).toFixed(2)} J`;
         },
-        explain: v => `با e=${v.e} → اتلاف انرژی = ${(0.5*v.m1*v.v1*v.v1 - (0.5*v.m1*((v.m1-v.e*v.m2)*v.v1/(v.m1+v.m2))**2 + 0.5*v.m2*((1+v.e)*v.m1*v.v1/(v.m1+v.m2))**2)).toFixed(2)} J`
+        explainEn: v => {
+          const KEi = 0.5*v.m1*v.v1*v.v1;
+          const v1f = ((v.m1-v.e*v.m2)*v.v1)/(v.m1+v.m2);
+          const v2f = ((1+v.e)*v.m1*v.v1)/(v.m1+v.m2);
+          const KEf = 0.5*v.m1*v1f*v1f + 0.5*v.m2*v2f*v2f;
+          return `e=${v.e} → loss ${(KEi-KEf).toFixed(2)} J`;
+        }
       },
       heat_mech: {
-        name: 'تبدیل کار به گرما',
-        formula: 'Q = W = Fd   ·   ΔT = Q/(mc)',
-        desc: 'گرمایش ناشی از کار مکانیکی (اصطکاک).',
-        fields: [['F','نیرو','N',1,500,1,50],['d','مسافت','m',1,100,1,20],['m','جرم','kg',0.1,10,0.1,1],['c','ظرفیت ویژه','J/kg·K',100,5000,50,900]],
+        nameFa: 'کار به گرما', nameEn: 'Work to heat',
+        formula: 'Q = Fd  ·  ΔT = Q/(mc)',
+        descFa: 'گرمایش ناشی از کار اصطکاکی.',
+        descEn: 'Heating from frictional work.',
+        fields: [
+          {k:'F', fa:'نیرو', en:'Force', u:'N', min:1, max:500, step:1, def:50},
+          {k:'d', fa:'مسافت', en:'Distance', u:'m', min:1, max:100, step:1, def:20},
+          {k:'m', fa:'جرم', en:'Mass', u:'kg', min:0.1, max:10, step:0.1, def:1},
+          {k:'c', fa:'ظرفیت ویژه', en:'Specific heat', u:'J/kg·K', min:100, max:5000, step:50, def:900}
+        ],
         calc: v => {
           const Q = v.F * v.d;
           const dT = Q / (v.m * v.c);
-          return [['گرما Q',Q.toFixed(0),'J'],['ΔT',dT.toFixed(2),'K'],['انرژی بر جرم',(Q/v.m).toFixed(1),'J/kg']];
+          return [
+            {fa:'گرما Q', en:'Heat Q', val:Q.toFixed(0), u:'J'},
+            {fa:'ΔT', en:'ΔT', val:dT.toFixed(2), u:'K'},
+            {fa:'انرژی بر جرم', en:'Energy/mass', val:(Q/v.m).toFixed(1), u:'J/kg'}
+          ];
         },
-        explain: v => `W = ${v.F}×${v.d} = ${v.F*v.d} J → ΔT = ${(v.F*v.d/(v.m*v.c)).toFixed(2)} K`
+        explainFa: v => `Q=${v.F*v.d} J → ΔT=${(v.F*v.d/(v.m*v.c)).toFixed(2)} K`,
+        explainEn: v => `Q=${v.F*v.d} J → ΔT=${(v.F*v.d/(v.m*v.c)).toFixed(2)} K`
       },
       orbital_energy: {
-        name: 'انرژی مداری',
-        formula: 'E = −GMm/(2a)   ·   Eₖ = GMm/(2a)',
-        desc: 'انرژی کل و جنبشی در مدار دایره‌ای.',
-        fields: [['M','جرم مرکزی','M☉',0.1,5,0.1,1],['a','نیم‌محور','AU',0.1,10,0.1,1],['m','جرم ماهواره','kg',1,1000,1,100]],
+        nameFa: 'انرژی مداری', nameEn: 'Orbital energy',
+        formula: 'E = −GMm/(2a)  ·  Eₖ = GMm/(2a)',
+        descFa: 'انرژی کل در مدار دایره‌ای.',
+        descEn: 'Total energy in circular orbit.',
+        fields: [
+          {k:'M', fa:'جرم مرکزی', en:'Central mass', u:'M☉', min:0.1, max:5, step:0.1, def:1},
+          {k:'a', fa:'نیم‌محور', en:'Semi-major axis', u:'AU', min:0.1, max:10, step:0.1, def:1},
+          {k:'m', fa:'جرم ماهواره', en:'Satellite mass', u:'kg', min:1, max:1000, step:1, def:100}
+        ],
         calc: v => {
           const M = v.M * CONST.M_SUN;
           const a = v.a * CONST.AU;
           const E = -CONST.G * M * v.m / (2 * a);
-          const Ek = -E;
-          return [['E کل',E.toExponential(3),'J'],['Eₖ',Ek.toExponential(3),'J'],['Eₚ',(2*E).toExponential(3),'J']];
+          return [
+            {fa:'E کل', en:'Total E', val:E.toExponential(3), u:'J'},
+            {fa:'Eₖ', en:'Eₖ', val:(-E).toExponential(3), u:'J'},
+            {fa:'Eₚ', en:'Eₚ', val:(2*E).toExponential(3), u:'J'}
+          ];
         },
-        explain: v => `E = −GMm/(2a) برای مدار با a=${v.a} AU`
+        explainFa: v => `E=−GMm/(2a) برای a=${v.a} AU`,
+        explainEn: v => `E=−GMm/(2a) for a=${v.a} AU`
       }
     }
   },
 
   wave: {
-    title: 'موج و صوت',
-    icon: '〰️',
+    titleFa: 'موج و صوت', titleEn: 'Waves & Sound', icon: '〰️',
     experiments: {
       sine: {
-        name: 'موج سینوسی',
+        nameFa: 'موج سینوسی', nameEn: 'Sine wave',
         formula: 'y = A sin(2πft − kx + φ)',
-        desc: 'شکل موج و پارامترهای آن.',
-        fields: [['A','دامنه','—',0.2,5,0.1,2],['f','فرکانس','Hz',0.2,5,0.1,1],['phase','فاز','rad',0,6.28,0.1,0]],
-        calc: v => [['دوره',(1/v.f).toFixed(3),'s'],['فرکانس',v.f.toFixed(2),'Hz'],['دامنه',v.A.toFixed(2),'']],
-        explain: v => `موج با f=${v.f} Hz و A=${v.A}`
+        descFa: 'شکل موج و پارامترها.',
+        descEn: 'Wave shape and parameters.',
+        fields: [
+          {k:'A', fa:'دامنه', en:'Amplitude', u:'—', min:0.2, max:5, step:0.1, def:2},
+          {k:'f', fa:'فرکانس', en:'Frequency', u:'Hz', min:0.2, max:5, step:0.1, def:1},
+          {k:'phase', fa:'فاز', en:'Phase', u:'rad', min:0, max:6.28, step:0.1, def:0}
+        ],
+        calc: v => [
+          {fa:'دوره', en:'Period', val:(1/v.f).toFixed(3), u:'s'},
+          {fa:'فرکانس', en:'Frequency', val:v.f.toFixed(2), u:'Hz'},
+          {fa:'دامنه', en:'Amplitude', val:v.A.toFixed(2), u:''}
+        ],
+        explainFa: v => `f=${v.f} Hz · A=${v.A}`,
+        explainEn: v => `f=${v.f} Hz · A=${v.A}`
       },
       string: {
-        name: 'موج روی ریسمان',
-        formula: 'v = √(T/μ)   ·   λ = 2L/n',
-        desc: 'سرعت موج و طول موج هماهنگ‌ها.',
-        fields: [['T','کشش','N',1,200,1,50],['mu','چگالی خطی','g/m',0.5,20,0.5,5],['L','طول','m',0.2,5,0.1,1],['n','هماهنگ','—',1,8,1,1]],
+        nameFa: 'موج ریسمان', nameEn: 'String wave',
+        formula: 'v = √(T/μ)  ·  λ = 2L/n',
+        descFa: 'سرعت موج و طول موج.',
+        descEn: 'Wave speed and wavelength.',
+        fields: [
+          {k:'T', fa:'کشش', en:'Tension', u:'N', min:1, max:200, step:1, def:50},
+          {k:'mu', fa:'چگالی خطی', en:'Linear density', u:'g/m', min:0.5, max:20, step:0.5, def:5},
+          {k:'L', fa:'طول', en:'Length', u:'m', min:0.2, max:5, step:0.1, def:1},
+          {k:'n', fa:'هماهنگ', en:'Harmonic', u:'—', min:1, max:8, step:1, def:1}
+        ],
         calc: v => {
           const vel = Math.sqrt(v.T / (v.mu/1000));
           const lambda = 2 * v.L / v.n;
           const f = vel / lambda;
-          return [['سرعت موج',vel.toFixed(1),'m/s'],['λ',lambda.toFixed(3),'m'],['فرکانس',f.toFixed(1),'Hz']];
+          return [
+            {fa:'سرعت موج', en:'Wave speed', val:vel.toFixed(1), u:'m/s'},
+            {fa:'λ', en:'λ', val:lambda.toFixed(3), u:'m'},
+            {fa:'فرکانس', en:'Frequency', val:f.toFixed(1), u:'Hz'}
+          ];
         },
-        explain: v => `v = √(T/μ) = ${Math.sqrt(v.T/(v.mu/1000)).toFixed(1)} m/s`
+        explainFa: v => `v=√(T/μ)=${Math.sqrt(v.T/(v.mu/1000)).toFixed(1)} m/s`,
+        explainEn: v => `v=√(T/μ)=${Math.sqrt(v.T/(v.mu/1000)).toFixed(1)} m/s`
       },
       doppler: {
-        name: 'اثر داپلر',
-        formula: 'f′ = f (v ± vₒ)/(v ± vₛ)',
-        desc: 'فرکانس شنیده‌شده با حرکت منبع/ناظر.',
-        fields: [['f','فرکانس منبع','Hz',100,2000,10,440],['vs','سرعت منبع','m/s',-50,50,1,0],['vo','سرعت ناظر','m/s',-50,50,1,0],['v','سرعت صوت','m/s',300,400,1,343]],
+        nameFa: 'اثر داپلر', nameEn: 'Doppler effect',
+        formula: "f′ = f (v±vₒ)/(v±vₛ)",
+        descFa: 'فرکانس شنیده‌شده.',
+        descEn: 'Heard frequency.',
+        fields: [
+          {k:'f', fa:'فرکانس منبع', en:'Source freq.', u:'Hz', min:100, max:2000, step:10, def:440},
+          {k:'vs', fa:'سرعت منبع', en:'Source speed', u:'m/s', min:-50, max:50, step:1, def:0},
+          {k:'vo', fa:'سرعت ناظر', en:'Observer speed', u:'m/s', min:-50, max:50, step:1, def:0},
+          {k:'v', fa:'سرعت صوت', en:'Sound speed', u:'m/s', min:300, max:400, step:1, def:343}
+        ],
         calc: v => {
           const fp = v.f * (v.v + v.vo) / (v.v + v.vs);
-          return [['f′ شنیده‌شده',fp.toFixed(1),'Hz'],['Δf',(fp-v.f).toFixed(1),'Hz'],['نسبت',(fp/v.f).toFixed(4),'']];
+          return [
+            {fa:'f′ شنیده‌شده', en:'Heard f′', val:fp.toFixed(1), u:'Hz'},
+            {fa:'Δf', en:'Δf', val:(fp-v.f).toFixed(1), u:'Hz'},
+            {fa:'نسبت', en:'Ratio', val:(fp/v.f).toFixed(4), u:''}
+          ];
         },
-        explain: v => `f′ = ${v.f}×(${v.v}+${v.vo})/(${v.v}+${v.vs}) = ${(v.f*(v.v+v.vo)/(v.v+v.vs)).toFixed(1)} Hz`
+        explainFa: v => `f′=${(v.f*(v.v+v.vo)/(v.v+v.vs)).toFixed(1)} Hz`,
+        explainEn: v => `f′=${(v.f*(v.v+v.vo)/(v.v+v.vs)).toFixed(1)} Hz`
       },
       beats: {
-        name: 'ضربان (بی‌ت)',
+        nameFa: 'ضربان', nameEn: 'Beats',
         formula: 'f_beat = |f₁ − f₂|',
-        desc: 'فرکانس ضربان دو موج نزدیک.',
-        fields: [['f1','فرکانس ۱','Hz',100,1000,1,440],['f2','فرکانس ۲','Hz',100,1000,1,444]],
+        descFa: 'فرکانس ضربان.',
+        descEn: 'Beat frequency.',
+        fields: [
+          {k:'f1', fa:'فرکانس ۱', en:'Frequency 1', u:'Hz', min:100, max:1000, step:1, def:440},
+          {k:'f2', fa:'فرکانس ۲', en:'Frequency 2', u:'Hz', min:100, max:1000, step:1, def:444}
+        ],
         calc: v => {
           const fb = Math.abs(v.f1 - v.f2);
-          return [['فرکانس ضربان',fb.toFixed(1),'Hz'],['دوره ضربان',fb>0?(1/fb).toFixed(3):'∞','s'],['میانگین',((v.f1+v.f2)/2).toFixed(1),'Hz']];
+          return [
+            {fa:'فرکانس ضربان', en:'Beat freq.', val:fb.toFixed(1), u:'Hz'},
+            {fa:'دوره ضربان', en:'Beat period', val:fb>0?(1/fb).toFixed(3):'∞', u:'s'},
+            {fa:'میانگین', en:'Average', val:((v.f1+v.f2)/2).toFixed(1), u:'Hz'}
+          ];
         },
-        explain: v => `f_beat = |${v.f1}−${v.f2}| = ${Math.abs(v.f1-v.f2).toFixed(1)} Hz`
+        explainFa: v => `f_beat=|${v.f1}−${v.f2}|=${Math.abs(v.f1-v.f2).toFixed(1)} Hz`,
+        explainEn: v => `f_beat=|${v.f1}−${v.f2}|=${Math.abs(v.f1-v.f2).toFixed(1)} Hz`
       }
     }
   },
 
   chemistry: {
-    title: 'شیمی',
-    icon: '🧪',
+    titleFa: 'شیمی', titleEn: 'Chemistry', icon: '🧪',
     experiments: {
       periodic: {
-        name: 'جدول تناوبی',
-        formula: 'Z · جرم اتمی · آرایش الکترونی',
-        desc: 'کاوش جدول مندلیف کامل ۱۱۸ عنصری.',
+        nameFa: 'جدول تناوبی', nameEn: 'Periodic table',
+        formula: 'Z · atomic mass · e⁻ config',
+        descFa: 'جدول کامل ۱۱۸ عنصری.',
+        descEn: 'Full 118-element table.',
         fields: [],
         calc: () => [],
-        explain: () => 'روی عنصر کلیک کنید یا جستجو کنید.'
+        explainFa: () => 'روی عنصر کلیک یا جستجو کنید.',
+        explainEn: () => 'Click an element or search.'
       },
       reaction: {
-        name: 'ترکیب مواد',
-        formula: 'واکنش‌های ساده آموزشی',
-        desc: 'دو عنصر را انتخاب کنید تا واکنش ممکن را ببینید.',
+        nameFa: 'ترکیب مواد', nameEn: 'Reactions',
+        formula: 'A + B → product',
+        descFa: 'واکنش‌های ساده آموزشی.',
+        descEn: 'Simple educational reactions.',
         fields: [],
         calc: () => [],
-        explain: () => 'عنصر اول و دوم را از لیست انتخاب کنید.'
+        explainFa: () => 'دو عنصر را انتخاب کنید.',
+        explainEn: () => 'Select two elements.'
       },
       molar: {
-        name: 'جرم مولی و مول',
-        formula: 'n = m/M   ·   N = n × N_A',
-        desc: 'تعداد مول و تعداد ذرات از جرم و جرم مولی.',
-        fields: [['mass','جرم نمونه','g',0.1,500,0.1,18],['M','جرم مولی','g/mol',1,300,0.1,18]],
+        nameFa: 'جرم مولی', nameEn: 'Molar mass',
+        formula: 'n = m/M  ·  N = n × N_A',
+        descFa: 'مول و تعداد ذرات.',
+        descEn: 'Moles and particle count.',
+        fields: [
+          {k:'mass', fa:'جرم نمونه', en:'Sample mass', u:'g', min:0.1, max:500, step:0.1, def:18},
+          {k:'M', fa:'جرم مولی', en:'Molar mass', u:'g/mol', min:1, max:300, step:0.1, def:18}
+        ],
         calc: v => {
           const n = v.mass / v.M;
-          const N = n * 6.02214076e23;
-          return [['مول',n.toFixed(4),'mol'],['تعداد ذرات',N.toExponential(3),''],['جرم مولی',v.M.toFixed(2),'g/mol']];
+          const N = n * CONST.N_A;
+          return [
+            {fa:'مول', en:'Moles', val:n.toFixed(4), u:'mol'},
+            {fa:'تعداد ذرات', en:'Particles', val:N.toExponential(3), u:''},
+            {fa:'جرم مولی', en:'Molar mass', val:v.M.toFixed(2), u:'g/mol'}
+          ];
         },
-        explain: v => `n = ${v.mass}/${v.M} = ${(v.mass/v.M).toFixed(4)} mol`
+        explainFa: v => `n=${(v.mass/v.M).toFixed(4)} mol`,
+        explainEn: v => `n=${(v.mass/v.M).toFixed(4)} mol`
       }
     }
   },
 
   astronomy: {
-    title: 'نجوم و کوانتوم',
-    icon: '🌌',
+    titleFa: 'نجوم و کوانتوم', titleEn: 'Astronomy & Quantum', icon: '🌌',
     experiments: {
       kepler: {
-        name: 'قانون سوم کپلر',
-        formula: 'T² = 4π²a³ / GM   ·   v = √(GM/r)',
-        desc: 'دوره مداری و سرعت در مدار دایره‌ای.',
-        fields: [['M','جرم مرکزی','M☉',0.1,20,0.1,1],['a','نیم‌محور','AU',0.1,30,0.1,1]],
+        nameFa: 'قانون کپلر', nameEn: "Kepler's 3rd law",
+        formula: 'T² = 4π²a³/GM  ·  v = √(GM/r)',
+        descFa: 'دوره و سرعت مداری.',
+        descEn: 'Orbital period and speed.',
+        fields: [
+          {k:'M', fa:'جرم مرکزی', en:'Central mass', u:'M☉', min:0.1, max:20, step:0.1, def:1},
+          {k:'a', fa:'نیم‌محور', en:'Semi-major axis', u:'AU', min:0.1, max:30, step:0.1, def:1}
+        ],
         calc: v => {
           const M = v.M * CONST.M_SUN;
           const a = v.a * CONST.AU;
           const T = 2 * Math.PI * Math.sqrt(a**3 / (CONST.G * M));
           const Ty = T / 86400 / 365.256;
           const vOrb = Math.sqrt(CONST.G * M / a);
-          return [['دوره',Ty.toFixed(3),'سال'],['سرعت مداری',(vOrb/1000).toFixed(2),'km/s'],['a',v.a.toFixed(2),'AU']];
+          return [
+            {fa:'دوره', en:'Period', val:Ty.toFixed(3), u:'yr'},
+            {fa:'سرعت مداری', en:'Orbital speed', val:(vOrb/1000).toFixed(2), u:'km/s'},
+            {fa:'a', en:'a', val:v.a.toFixed(2), u:'AU'}
+          ];
         },
-        explain: v => `برای a=${v.a} AU و M=${v.M} M☉ → T ≈ ${(2*Math.PI*Math.sqrt((v.a*CONST.AU)**3/(CONST.G*v.M*CONST.M_SUN))/86400/365.256).toFixed(3)} سال`
+        explainFa: v => `a=${v.a} AU, M=${v.M} M☉ → T≈${(2*Math.PI*Math.sqrt((v.a*CONST.AU)**3/(CONST.G*v.M*CONST.M_SUN))/86400/365.256).toFixed(3)} yr`,
+        explainEn: v => `a=${v.a} AU, M=${v.M} M☉ → T≈${(2*Math.PI*Math.sqrt((v.a*CONST.AU)**3/(CONST.G*v.M*CONST.M_SUN))/86400/365.256).toFixed(3)} yr`
       },
       escape: {
-        name: 'سرعت گریز',
+        nameFa: 'سرعت گریز', nameEn: 'Escape velocity',
         formula: 'v_esc = √(2GM/r)',
-        desc: 'حداقل سرعت برای خروج از میدان گرانشی.',
-        fields: [['M','جرم','M⊕',0.1,1000,0.1,1],['r','شعاع','R⊕',0.5,50,0.1,1]],
+        descFa: 'حداقل سرعت خروج.',
+        descEn: 'Minimum escape speed.',
+        fields: [
+          {k:'M', fa:'جرم', en:'Mass', u:'M⊕', min:0.1, max:1000, step:0.1, def:1},
+          {k:'r', fa:'شعاع', en:'Radius', u:'R⊕', min:0.5, max:50, step:0.1, def:1}
+        ],
         calc: v => {
           const M = v.M * CONST.M_EARTH;
           const r = v.r * CONST.R_EARTH;
           const vesc = Math.sqrt(2 * CONST.G * M / r);
-          return [['سرعت گریز',(vesc/1000).toFixed(2),'km/s'],['مقایسه زمین',(vesc/11186).toFixed(2),'×'],['r',(r/1000).toFixed(0),'km']];
+          return [
+            {fa:'سرعت گریز', en:'Escape speed', val:(vesc/1000).toFixed(2), u:'km/s'},
+            {fa:'نسبت به زمین', en:'vs Earth', val:(vesc/11186).toFixed(2), u:'×'},
+            {fa:'r', en:'r', val:(r/1000).toFixed(0), u:'km'}
+          ];
         },
-        explain: v => `v_esc = √(2GM/r) = ${(Math.sqrt(2*CONST.G*v.M*CONST.M_EARTH/(v.r*CONST.R_EARTH))/1000).toFixed(2)} km/s`
+        explainFa: v => `v_esc=${(Math.sqrt(2*CONST.G*v.M*CONST.M_EARTH/(v.r*CONST.R_EARTH))/1000).toFixed(2)} km/s`,
+        explainEn: v => `v_esc=${(Math.sqrt(2*CONST.G*v.M*CONST.M_EARTH/(v.r*CONST.R_EARTH))/1000).toFixed(2)} km/s`
       },
       blackbody: {
-        name: 'جسم سیاه (وین و استفان)',
-        formula: 'λ_max T = 2.897×10⁻³   ·   P = σAT⁴',
-        desc: 'قانون جابه‌جایی وین و توان تابشی.',
-        fields: [['T','دما','K',100,10000,50,5800],['A','مساحت','m²',0.01,100,0.01,1]],
+        nameFa: 'جسم سیاه', nameEn: 'Blackbody',
+        formula: 'λ_max T = 2.897×10⁻³  ·  P = σAT⁴',
+        descFa: 'قانون وین و استفان.',
+        descEn: "Wien's and Stefan's laws.",
+        fields: [
+          {k:'T', fa:'دما', en:'Temperature', u:'K', min:100, max:10000, step:50, def:5800},
+          {k:'A', fa:'مساحت', en:'Area', u:'m²', min:0.01, max:100, step:0.01, def:1}
+        ],
         calc: v => {
-          const lambda = 2.897771955e-3 / v.T; // m
+          const lambda = 2.897771955e-3 / v.T;
           const P = CONST.SIGMA * v.A * v.T ** 4;
-          return [['λ_max',(lambda*1e9).toFixed(1),'nm'],['توان کل',P.toExponential(3),'W'],['دمای خورشید',v.T>=5000&&v.T<=6000?'نزدیک':'—','']];
+          return [
+            {fa:'λ_max', en:'λ_max', val:(lambda*1e9).toFixed(1), u:'nm'},
+            {fa:'توان کل', en:'Total power', val:P.toExponential(3), u:'W'},
+            {fa:'', en:'', val:v.T>=5000&&v.T<=6000?'≈Sun':'', u:''}
+          ];
         },
-        explain: v => `λ_max = 2.898×10⁻³ / ${v.T} ≈ ${(2.897e-3/v.T*1e9).toFixed(1)} nm`
+        explainFa: v => `λ_max≈${(2.897e-3/v.T*1e9).toFixed(1)} nm`,
+        explainEn: v => `λ_max≈${(2.897e-3/v.T*1e9).toFixed(1)} nm`
       },
       photoelectric: {
-        name: 'اثر فوتوالکتریک',
-        formula: 'E = hf   ·   K_max = hf − φ',
-        desc: 'انرژی فوتون و انرژی جنبشی بیشینه الکترون.',
-        fields: [['lambda','طول موج','nm',100,800,10,400],['phi','تابع کار','eV',1,6,0.1,2.3]],
+        nameFa: 'فوتوالکتریک', nameEn: 'Photoelectric',
+        formula: 'E = hf  ·  K_max = hf − φ',
+        descFa: 'انرژی فوتون و الکترون.',
+        descEn: 'Photon and electron energy.',
+        fields: [
+          {k:'lambda', fa:'طول موج', en:'Wavelength', u:'nm', min:100, max:800, step:10, def:400},
+          {k:'phi', fa:'تابع کار', en:'Work function', u:'eV', min:1, max:6, step:0.1, def:2.3}
+        ],
         calc: v => {
           const f = CONST.C / (v.lambda * 1e-9);
           const E_eV = (CONST.H * f) / CONST.E;
           const Kmax = E_eV - v.phi;
-          return [['انرژی فوتون',E_eV.toFixed(3),'eV'],['K_max',Kmax>0?Kmax.toFixed(3):'۰ (گسیل نمی‌شود)','eV'],['فرکانس',(f/1e14).toFixed(2),'×10¹⁴ Hz']];
+          return [
+            {fa:'انرژی فوتون', en:'Photon energy', val:E_eV.toFixed(3), u:'eV'},
+            {fa:'K_max', en:'K_max', val:Kmax>0?Kmax.toFixed(3):'0', u:'eV'},
+            {fa:'فرکانس', en:'Frequency', val:(f/1e14).toFixed(2), u:'×10¹⁴ Hz'}
+          ];
         },
-        explain: v => {
-          const E = (CONST.H * CONST.C / (v.lambda*1e-9)) / CONST.E;
-          return `hf = ${E.toFixed(3)} eV · φ = ${v.phi} eV → ${E>v.phi ? 'گسیل الکترون' : 'گسیلی رخ نمی‌دهد'}`;
+        explainFa: v => {
+          const E = (CONST.H*CONST.C/(v.lambda*1e-9))/CONST.E;
+          return `hf=${E.toFixed(3)} eV · ${E>v.phi?'گسیل':'بدون گسیل'}`;
+        },
+        explainEn: v => {
+          const E = (CONST.H*CONST.C/(v.lambda*1e-9))/CONST.E;
+          return `hf=${E.toFixed(3)} eV · ${E>v.phi?'emission':'no emission'}`;
         }
       },
       deBroglie: {
-        name: 'طول موج دوبروی',
-        formula: 'λ = h / p = h / (mv)',
-        desc: 'موج ماده برای ذرات.',
-        fields: [['m','جرم','u (amu)',0.0005,10,0.0001,1],['v','سرعت','m/s',1,1e7,10,1e5]],
+        nameFa: 'دوبروی', nameEn: 'de Broglie',
+        formula: 'λ = h / p = h /(mv)',
+        descFa: 'طول موج ماده.',
+        descEn: 'Matter wavelength.',
+        fields: [
+          {k:'m', fa:'جرم', en:'Mass', u:'u', min:0.0005, max:10, step:0.0001, def:1},
+          {k:'v', fa:'سرعت', en:'Speed', u:'m/s', min:1, max:1e7, step:10, def:1e5}
+        ],
         calc: v => {
           const mass = v.m * 1.660539e-27;
           const lambda = CONST.H / (mass * v.v);
-          return [['λ',lambda.toExponential(3),'m'],['λ (pm)',(lambda*1e12).toFixed(3),'pm'],['تکانه',(mass*v.v).toExponential(3),'kg·m/s']];
+          return [
+            {fa:'λ', en:'λ', val:lambda.toExponential(3), u:'m'},
+            {fa:'λ (pm)', en:'λ (pm)', val:(lambda*1e12).toFixed(3), u:'pm'},
+            {fa:'تکانه', en:'Momentum', val:(mass*v.v).toExponential(3), u:'kg·m/s'}
+          ];
         },
-        explain: v => `λ = h/(mv) برای جرم ${v.m} u با سرعت ${v.v} m/s`
+        explainFa: v => `λ=h/(mv) برای ${v.m} u`,
+        explainEn: v => `λ=h/(mv) for ${v.m} u`
       },
       bohr: {
-        name: 'مدل بور (هیدروژن)',
-        formula: 'Eₙ = −13.6 / n² eV   ·   rₙ = 0.529 n² Å',
-        desc: 'ترازهای انرژی و شعاع مدار در اتم هیدروژن.',
-        fields: [['n','تراز n','—',1,10,1,2]],
+        nameFa: 'مدل بور', nameEn: 'Bohr model',
+        formula: 'Eₙ = −13.6/n² eV  ·  rₙ = 0.529 n² Å',
+        descFa: 'ترازهای هیدروژن.',
+        descEn: 'Hydrogen energy levels.',
+        fields: [
+          {k:'n', fa:'تراز n', en:'Level n', u:'—', min:1, max:10, step:1, def:2}
+        ],
         calc: v => {
           const E = -13.6 / (v.n ** 2);
           const r = 0.529 * v.n ** 2;
           const delta = v.n > 1 ? (-13.6/(v.n**2) + 13.6) : 0;
-          return [['Eₙ',E.toFixed(3),'eV'],['rₙ',r.toFixed(3),'Å'],['ΔE از پایه',delta.toFixed(3),'eV']];
+          return [
+            {fa:'Eₙ', en:'Eₙ', val:E.toFixed(3), u:'eV'},
+            {fa:'rₙ', en:'rₙ', val:r.toFixed(3), u:'Å'},
+            {fa:'ΔE از پایه', en:'ΔE from ground', val:delta.toFixed(3), u:'eV'}
+          ];
         },
-        explain: v => `n=${v.n} → E = −13.6/${v.n}² = ${(-13.6/(v.n**2)).toFixed(3)} eV`
+        explainFa: v => `n=${v.n} → E=${(-13.6/(v.n**2)).toFixed(3)} eV`,
+        explainEn: v => `n=${v.n} → E=${(-13.6/(v.n**2)).toFixed(3)} eV`
       },
       schwarzschild: {
-        name: 'شعاع شوارتزشیلد',
-        formula: 'Rₛ = 2GM / c²',
-        desc: 'افق رویداد سیاه‌چاله.',
-        fields: [['M','جرم','M☉',0.1,1e6,0.1,10]],
+        nameFa: 'شوارتزشیلد', nameEn: 'Schwarzschild',
+        formula: 'Rₛ = 2GM/c²',
+        descFa: 'افق رویداد سیاه‌چاله.',
+        descEn: 'Black hole event horizon.',
+        fields: [
+          {k:'M', fa:'جرم', en:'Mass', u:'M☉', min:0.1, max:1e6, step:0.1, def:10}
+        ],
         calc: v => {
           const Rs = 2 * CONST.G * v.M * CONST.M_SUN / (CONST.C ** 2);
-          return [['Rₛ',(Rs/1000).toFixed(2),'km'],['Rₛ / R☉',(Rs/6.96e8).toFixed(4),''],['جرم',v.M.toFixed(1),'M☉']];
+          return [
+            {fa:'Rₛ', en:'Rₛ', val:(Rs/1000).toFixed(2), u:'km'},
+            {fa:'Rₛ/R☉', en:'Rₛ/R☉', val:(Rs/6.96e8).toFixed(4), u:''},
+            {fa:'جرم', en:'Mass', val:v.M.toFixed(1), u:'M☉'}
+          ];
         },
-        explain: v => `Rₛ = 2GM/c² برای ${v.M} M☉ ≈ ${(2*CONST.G*v.M*CONST.M_SUN/(CONST.C**2)/1000).toFixed(2)} km`
+        explainFa: v => `Rₛ≈${(2*CONST.G*v.M*CONST.M_SUN/(CONST.C**2)/1000).toFixed(2)} km`,
+        explainEn: v => `Rₛ≈${(2*CONST.G*v.M*CONST.M_SUN/(CONST.C**2)/1000).toFixed(2)} km`
       },
       hubble: {
-        name: 'قانون هابل',
+        nameFa: 'قانون هابل', nameEn: "Hubble's law",
         formula: 'v = H₀ × d',
-        desc: 'سرعت دور شدن کهکشان‌ها.',
-        fields: [['d','فاصله','Mpc',1,5000,1,100],['H0','H₀','km/s/Mpc',50,100,1,70]],
+        descFa: 'سرعت دور شدن کهکشان.',
+        descEn: 'Galaxy recession speed.',
+        fields: [
+          {k:'d', fa:'فاصله', en:'Distance', u:'Mpc', min:1, max:5000, step:1, def:100},
+          {k:'H0', fa:'H₀', en:'H₀', u:'km/s/Mpc', min:50, max:100, step:1, def:70}
+        ],
         calc: v => {
           const vel = v.H0 * v.d;
-          const z = vel / 3e5; // rough
-          return [['سرعت دور شدن',vel.toFixed(0),'km/s'],['انتقال به سرخ تقریبی',z.toFixed(4),''],['فاصله',v.d.toFixed(0),'Mpc']];
+          const z = vel / 3e5;
+          return [
+            {fa:'سرعت', en:'Velocity', val:vel.toFixed(0), u:'km/s'},
+            {fa:'z تقریبی', en:'Approx. z', val:z.toFixed(4), u:''},
+            {fa:'فاصله', en:'Distance', val:v.d.toFixed(0), u:'Mpc'}
+          ];
         },
-        explain: v => `v = ${v.H0} × ${v.d} = ${v.H0*v.d} km/s`
+        explainFa: v => `v=${v.H0}×${v.d}=${v.H0*v.d} km/s`,
+        explainEn: v => `v=${v.H0}×${v.d}=${v.H0*v.d} km/s`
       }
     }
   }
