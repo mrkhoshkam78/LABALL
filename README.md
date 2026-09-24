@@ -1,42 +1,50 @@
-# Universal Lab v5.0
+# Universal Lab v6.0
 
-Interactive offline science laboratory with modular architecture.
+Major upgrade: WebGL 3D, physics engine, live audio, solar system, molecular builder, WebXR-ready.
 
-## What's new in v5
+## Features
 
-- **Settings fixed** — theme & language toggle work reliably
-- **Live animations fixed** — Canvas redraws every frame with experiment-specific visuals
-- **4 themes**: Ocean · Ember · Aurora · **Light**
-- **Dynamic particle background** with soft connections
-- **Modular JS**: formulas & calculations split per section
-  - `exp_physics.js`, `exp_electric.js`, `exp_energy.js`, …
-  - `constants.js`, `elements.js`, `reactions.js`, `i18n.js`
-- Bilingual FA / EN
-- Full periodic table (118), reactions, quantum & astronomy
+| Mode | Description |
+|------|-------------|
+| **3D Motion** | Kinematics path in Three.js with trail |
+| **Physics Engine** | Verlet integration — bounce, spring, collision, fluid drag |
+| **Atom** | Bohr-like shells with orbiting electrons |
+| **Solar System** | 8 planets, adjustable time scale, starfield |
+| **Audio / Wave** | Microphone FFT spectrum + tone generator |
+| **Molecule** | Drag atoms (H,C,N,O,Cl), auto bonds, bond energy estimate |
+| **VR** | WebXR entry point when headset/browser supports it |
+
+## Stack
+
+- Three.js r160 (CDN)
+- Web Audio API
+- Canvas 2D (molecule + spectrum)
+- Vanilla JS modules
+
+## Run
+
+1. Open `index.html` in a modern browser (Chrome/Edge/Firefox recommended).
+2. For 3D: network access once to load Three.js from CDN, or place a local copy in `lib/`.
+3. Microphone mode requires user permission.
 
 ## Structure
 
 ```
-Universal_Lab_v5/
+Universal_Lab_v6/
 ├── index.html
 ├── css/style.css
 ├── js/
-│   ├── constants.js
-│   ├── i18n.js
-│   ├── elements.js
-│   ├── reactions.js
-│   ├── exp_physics.js
-│   ├── exp_electric.js
-│   ├── exp_energy.js
-│   ├── exp_wave.js
-│   ├── exp_chemistry.js
-│   ├── exp_astronomy.js
-│   └── app.js
+│   ├── app.js
+│   ├── scenes3d.js
+│   ├── physics_engine.js
+│   ├── audio_lab.js
+│   ├── solar.js
+│   └── molecule.js
 └── README.md
 ```
 
-## Run
+## Notes
 
-Open `index.html` in a browser. No build or server needed.
-
-GitHub Pages: push folder and enable Pages on main branch.
+- Solar positions are educational (relative periods), not full ephemerides.
+- Molecular energies are approximate textbook bond energies.
+- WebXR depends on device/browser support.

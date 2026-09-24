@@ -1,95 +1,72 @@
 <!doctype html>
-<html lang="fa" dir="rtl" data-theme="ocean">
+<html lang="fa" dir="rtl">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Universal Lab v5 | Science Lab</title>
-  <meta name="description" content="Offline interactive science lab — Physics, Electricity, Energy, Waves, Chemistry, Astronomy & Quantum. 4 themes · FA/EN">
+  <title>Universal Lab v6 | 3D · Physics · Audio · Solar · Molecule · VR</title>
   <link rel="stylesheet" href="css/style.css">
+  <!-- Three.js r160 from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
 </head>
 <body>
-  <canvas id="bgCanvas"></canvas>
-  <div class="app-wrap">
-    <header>
-      <div class="brand">
-        <div class="logo">⚗</div>
-        <div>
-          <h1>Universal Lab</h1>
-          <p>v5.0 · Modular · 4 Themes</p>
-        </div>
+  <header>
+    <div class="brand">
+      <div class="logo">⚗</div>
+      <div>
+        <h1>Universal Lab</h1>
+        <p>v6.0 · WebGL 3D · Physics · Audio · Solar · Molecule · VR</p>
       </div>
-      <div class="header-right">
-        <span class="badge" id="badgeOffline">کاملاً آفلاین</span>
-        <button type="button" class="icon-btn" id="btnSettings" title="Settings">⚙</button>
-      </div>
-    </header>
+    </div>
+    <span class="badge">Three.js · Web Audio · WebXR-ready</span>
+  </header>
 
-    <main class="app">
-      <div class="settings-panel" id="settingsPanel">
-        <h3>⚙ Settings / تنظیمات</h3>
-        <div style="margin-bottom:5px;font-size:11.5px;color:var(--muted)">Theme / تم</div>
-        <div class="theme-row">
-          <button type="button" class="theme-swatch active" data-t="ocean" title="Ocean"></button>
-          <button type="button" class="theme-swatch" data-t="ember" title="Ember"></button>
-          <button type="button" class="theme-swatch" data-t="aurora" title="Aurora"></button>
-          <button type="button" class="theme-swatch" data-t="light" title="Light"></button>
+  <main class="app">
+    <nav class="modes" id="modes">
+      <button class="mode active" data-mode="motion3d">🌐 حرکت سه‌بعدی</button>
+      <button class="mode" data-mode="physics">⚙️ موتور فیزیک</button>
+      <button class="mode" data-mode="atom">⚛️ ساختار اتم</button>
+      <button class="mode" data-mode="solar">🪐 منظومه شمسی</button>
+      <button class="mode" data-mode="audio">🎙️ صوت و موج</button>
+      <button class="mode" data-mode="molecule">🧪 شیمی مولکولی</button>
+      <button class="mode" data-mode="vr">🥽 حالت VR</button>
+    </nav>
+
+    <div class="layout">
+      <aside class="panel" id="controlsPanel">
+        <h2 id="ctrlTitle">حرکت سه‌بعدی</h2>
+        <p class="sub" id="ctrlDesc">پارامترها را تنظیم کنید؛ صحنه سه‌بعدی به‌صورت زنده به‌روز می‌شود.</p>
+        <div id="controls"></div>
+        <div class="actions">
+          <button class="btn btn-primary" id="btnRun">▶ اجرا / ریست انیمیشن</button>
+          <button class="btn btn-sec" id="btnReset">↺ بازنشانی</button>
         </div>
-        <div style="margin-bottom:5px;font-size:11.5px;color:var(--muted)">Language / زبان</div>
-        <div class="lang-row">
-          <button type="button" class="lang-btn active" data-lang="fa">فارسی</button>
-          <button type="button" class="lang-btn" data-lang="en">English</button>
-        </div>
-      </div>
+        <p class="hint" id="hint"></p>
+      </aside>
 
-      <nav class="cats" id="cats"></nav>
-      <div class="sub-exps" id="subExps"></div>
-
-      <div class="layout">
-        <section class="panel">
-          <h2 id="controlTitle">—</h2>
-          <p class="sub" id="controlDesc">—</p>
-          <div class="formula-box" id="formulaBox">—</div>
-          <div id="controls"></div>
-          <div class="actions">
-            <button type="button" class="primary" id="runBtn">▶ اجرا</button>
-            <button type="button" class="secondary" id="resetBtn">↺ بازنشانی</button>
-            <button type="button" class="secondary" id="saveBtn">☆ ذخیره</button>
+      <section>
+        <div class="viewport" id="viewport">
+          <div class="viewport-bar">
+            <b id="viewTitle">صحنه سه‌بعدی</b>
+            <span id="viewHint">کشیدن = چرخش · اسکرول = زوم</span>
           </div>
-          <p class="saved-msg" id="savedMsg"></p>
-        </section>
+          <div id="view3d"></div>
+          <canvas id="view2d" width="800" height="420"></canvas>
+        </div>
+        <div class="metrics" id="metrics"></div>
+        <div class="note" id="note">—</div>
+      </section>
+    </div>
+  </main>
 
-        <section class="panel">
-          <h2 id="resultsTitle">نتایج و مشاهده‌گر</h2>
-          <p class="sub" id="resultsSub">محاسبات زنده و انیمیشن</p>
-          <div class="results" id="metrics"></div>
-          <div class="visual">
-            <div class="visual-head">
-              <b id="visualTitle">—</b>
-              <span id="liveLabel">انیمیشن زنده</span>
-            </div>
-            <canvas id="scene" width="700" height="280"></canvas>
-          </div>
-          <div class="note" id="explanation">—</div>
-        </section>
-      </div>
-    </main>
+  <footer>
+    Universal Lab v6 · Three.js WebGL · Simple Physics Engine · Web Audio API · Approximate Solar Positions · Molecular Builder · WebXR entry
+  </footer>
 
-    <footer>
-      Universal Lab v5 · Modular JS · 4 themes (incl. Light) · FA/EN · Live animations · Dynamic background
-    </footer>
-  </div>
-
-  <!-- Modular scripts (order matters) -->
-  <script src="js/constants.js"></script>
-  <script src="js/i18n.js"></script>
-  <script src="js/elements.js"></script>
-  <script src="js/reactions.js"></script>
-  <script src="js/exp_physics.js"></script>
-  <script src="js/exp_electric.js"></script>
-  <script src="js/exp_energy.js"></script>
-  <script src="js/exp_wave.js"></script>
-  <script src="js/exp_chemistry.js"></script>
-  <script src="js/exp_astronomy.js"></script>
+  <script src="js/physics_engine.js"></script>
+  <script src="js/scenes3d.js"></script>
+  <script src="js/audio_lab.js"></script>
+  <script src="js/solar.js"></script>
+  <script src="js/molecule.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
