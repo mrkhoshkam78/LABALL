@@ -1,50 +1,24 @@
-# Universal Lab v6.0
+# Universal Lab v7.0
 
-Major upgrade: WebGL 3D, physics engine, live audio, solar system, molecular builder, WebXR-ready.
+Full restoration of classic labs + advanced 3D features + 5 new formulas per major section.
 
-## Features
+## Layers
 
-| Mode | Description |
-|------|-------------|
-| **3D Motion** | Kinematics path in Three.js with trail |
-| **Physics Engine** | Verlet integration — bounce, spring, collision, fluid drag |
-| **Atom** | Bohr-like shells with orbiting electrons |
-| **Solar System** | 8 planets, adjustable time scale, starfield |
-| **Audio / Wave** | Microphone FFT spectrum + tone generator |
-| **Molecule** | Drag atoms (H,C,N,O,Cl), auto bonds, bond energy estimate |
-| **VR** | WebXR entry point when headset/browser supports it |
+### Classic Lab
+- **Physics** (15): kinematics, freefall, projectile, circular, momentum, friction, spring, torque, density, work/power + terminal velocity, banked curve, impulse, surface escape, rocket equation
+- **Electricity** (15): Ohm, series/parallel, capacitor, Coulomb, Lorentz, transformer, RLC, PF, Kirchhoff + RC discharge, inductor energy, Wheatstone, Joule heat, skin depth
+- **Energy** (15): KE/PE, conservation, spring, power, efficiency, pendulum, gravity PE, collision loss, work→heat, orbital + Carnot, photon, nuclear binding, wind power, Seebeck
+- **Waves** (9): sine, string, Doppler, beats + Snell, Bragg, dB level, Malus, thin film
+- **Chemistry**: periodic table (118), reactions, mole + pH, ideal gas, dilution, half-life, Beer–Lambert
+- **Astronomy & Quantum**: Kepler, escape, blackbody, photoelectric, de Broglie, Bohr, Schwarzschild, Hubble + parallax, magnitude, redshift, Planck energy, time dilation
 
-## Stack
+### Advanced 3D
+- Three.js motion path, physics engine (Verlet), atom, solar system, mic FFT, molecule builder, WebXR entry
 
-- Three.js r160 (CDN)
-- Web Audio API
-- Canvas 2D (molecule + spectrum)
-- Vanilla JS modules
+### UI
+- 4 themes (Ocean, Ember, Aurora, Light)
+- FA / EN
+- Settings panel
 
 ## Run
-
-1. Open `index.html` in a modern browser (Chrome/Edge/Firefox recommended).
-2. For 3D: network access once to load Three.js from CDN, or place a local copy in `lib/`.
-3. Microphone mode requires user permission.
-
-## Structure
-
-```
-Universal_Lab_v6/
-├── index.html
-├── css/style.css
-├── js/
-│   ├── app.js
-│   ├── scenes3d.js
-│   ├── physics_engine.js
-│   ├── audio_lab.js
-│   ├── solar.js
-│   └── molecule.js
-└── README.md
-```
-
-## Notes
-
-- Solar positions are educational (relative periods), not full ephemerides.
-- Molecular energies are approximate textbook bond energies.
-- WebXR depends on device/browser support.
+Open `index.html`. Three.js loads from CDN (network once). Mic needs permission.

@@ -1,11 +1,10 @@
 <!doctype html>
-<html lang="fa" dir="rtl">
+<html lang="fa" dir="rtl" data-theme="ocean">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Universal Lab v6 | 3D · Physics · Audio · Solar · Molecule · VR</title>
+  <title>Universal Lab v7 | Full Lab + 3D</title>
   <link rel="stylesheet" href="css/style.css">
-  <!-- Three.js r160 from CDN -->
   <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
 </head>
 <body>
@@ -14,54 +13,110 @@
       <div class="logo">⚗</div>
       <div>
         <h1>Universal Lab</h1>
-        <p>v6.0 · WebGL 3D · Physics · Audio · Solar · Molecule · VR</p>
+        <p>v7.0 · Classic + 3D · Physics · Audio · Solar · Molecule · VR</p>
       </div>
     </div>
-    <span class="badge">Three.js · Web Audio · WebXR-ready</span>
+    <div class="header-right">
+      <span class="badge" id="badgeOffline">آفلاین + CDN Three.js</span>
+      <button type="button" class="icon-btn" id="btnSettings" title="Settings">⚙</button>
+    </div>
   </header>
 
   <main class="app">
-    <nav class="modes" id="modes">
-      <button class="mode active" data-mode="motion3d">🌐 حرکت سه‌بعدی</button>
-      <button class="mode" data-mode="physics">⚙️ موتور فیزیک</button>
-      <button class="mode" data-mode="atom">⚛️ ساختار اتم</button>
-      <button class="mode" data-mode="solar">🪐 منظومه شمسی</button>
-      <button class="mode" data-mode="audio">🎙️ صوت و موج</button>
-      <button class="mode" data-mode="molecule">🧪 شیمی مولکولی</button>
-      <button class="mode" data-mode="vr">🥽 حالت VR</button>
-    </nav>
+    <div class="settings-panel" id="settingsPanel">
+      <h3 style="font-size:13px;margin-bottom:8px;color:var(--accent2)">⚙ Settings</h3>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:4px">Theme</div>
+      <div class="theme-row">
+        <button type="button" class="theme-swatch active" data-t="ocean" title="Ocean"></button>
+        <button type="button" class="theme-swatch" data-t="ember" title="Ember"></button>
+        <button type="button" class="theme-swatch" data-t="aurora" title="Aurora"></button>
+        <button type="button" class="theme-swatch" data-t="light" title="Light"></button>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:4px">Language</div>
+      <div class="lang-row">
+        <button type="button" class="lang-btn active" data-lang="fa">فارسی</button>
+        <button type="button" class="lang-btn" data-lang="en">English</button>
+      </div>
+    </div>
 
-    <div class="layout">
-      <aside class="panel" id="controlsPanel">
-        <h2 id="ctrlTitle">حرکت سه‌بعدی</h2>
-        <p class="sub" id="ctrlDesc">پارامترها را تنظیم کنید؛ صحنه سه‌بعدی به‌صورت زنده به‌روز می‌شود.</p>
-        <div id="controls"></div>
-        <div class="actions">
-          <button class="btn btn-primary" id="btnRun">▶ اجرا / ریست انیمیشن</button>
-          <button class="btn btn-sec" id="btnReset">↺ بازنشانی</button>
-        </div>
-        <p class="hint" id="hint"></p>
-      </aside>
+    <div class="layer-tabs">
+      <button type="button" class="layer-tab active" data-layer="classic">📚 آزمایشگاه کلاسیک</button>
+      <button type="button" class="layer-tab" data-layer="advanced">🌐 پیشرفته سه‌بعدی</button>
+    </div>
 
-      <section>
-        <div class="viewport" id="viewport">
-          <div class="viewport-bar">
-            <b id="viewTitle">صحنه سه‌بعدی</b>
-            <span id="viewHint">کشیدن = چرخش · اسکرول = زوم</span>
+    <!-- Classic layer -->
+    <div id="layerClassic">
+      <nav class="cats" id="cats"></nav>
+      <div class="sub-exps" id="subExps"></div>
+      <div class="layout">
+        <section class="panel">
+          <h2 id="controlTitle">—</h2>
+          <p class="sub" id="controlDesc">—</p>
+          <div class="formula-box" id="formulaBox">—</div>
+          <div id="controls"></div>
+          <div class="actions">
+            <button type="button" class="btn btn-primary" id="runBtn">▶ اجرا</button>
+            <button type="button" class="btn btn-sec" id="resetBtn">↺ بازنشانی</button>
+            <button type="button" class="btn btn-sec" id="saveBtn">☆ ذخیره</button>
           </div>
-          <div id="view3d"></div>
-          <canvas id="view2d" width="800" height="420"></canvas>
-        </div>
-        <div class="metrics" id="metrics"></div>
-        <div class="note" id="note">—</div>
-      </section>
+          <p class="saved-msg" id="savedMsg"></p>
+        </section>
+        <section class="panel">
+          <h2 id="resultsTitle">نتایج</h2>
+          <p class="sub" id="resultsSub">محاسبات زنده</p>
+          <div class="results" id="metrics"></div>
+          <div class="visual">
+            <div class="visual-head"><b id="visualTitle">نمایش</b><span>مدل آموزشی</span></div>
+            <canvas id="scene2d" width="700" height="260"></canvas>
+          </div>
+          <div class="note" id="explanation">—</div>
+        </section>
+      </div>
+    </div>
+
+    <!-- Advanced 3D layer -->
+    <div id="layerAdvanced" class="hidden">
+      <nav class="modes" id="advModes">
+        <button type="button" class="mode active" data-mode="motion3d">🌐 حرکت ۳بعدی</button>
+        <button type="button" class="mode" data-mode="physics3d">⚙️ موتور فیزیک</button>
+        <button type="button" class="mode" data-mode="atom3d">⚛️ اتم</button>
+        <button type="button" class="mode" data-mode="solar3d">🪐 منظومه</button>
+        <button type="button" class="mode" data-mode="audio3d">🎙️ صوت</button>
+        <button type="button" class="mode" data-mode="mol3d">🧪 مولکول</button>
+        <button type="button" class="mode" data-mode="vr3d">🥽 VR</button>
+      </nav>
+      <div class="layout">
+        <section class="panel">
+          <h2 id="advTitle">حرکت سه‌بعدی</h2>
+          <p class="sub" id="advDesc">پارامترها و کنترل صحنه</p>
+          <div id="advControls"></div>
+          <div class="actions">
+            <button type="button" class="btn btn-primary" id="advRun">▶ اجرا / ریست</button>
+          </div>
+          <p class="hint" id="advHint" style="font-size:11px;color:var(--muted);margin-top:6px"></p>
+        </section>
+        <section class="panel">
+          <div class="visual" style="min-height:400px">
+            <div class="visual-head"><b id="advViewTitle">صحنه</b><span id="advViewHint">کشیدن=چرخش</span></div>
+            <div id="view3d"></div>
+            <canvas id="view2d" class="hidden" width="700" height="400" style="width:100%;height:400px;display:none;background:var(--canvas)"></canvas>
+          </div>
+          <div class="results" id="advMetrics" style="margin-top:8px"></div>
+          <div class="note" id="advNote">—</div>
+        </section>
+      </div>
     </div>
   </main>
 
   <footer>
-    Universal Lab v6 · Three.js WebGL · Simple Physics Engine · Web Audio API · Approximate Solar Positions · Molecular Builder · WebXR entry
+    Universal Lab v7 · تمام آزمایش‌های کلاسیک + ۵ فرمول جدید در هر بخش · Three.js · فیزیک · صوت · منظومه · مولکول · WebXR
   </footer>
 
+  <script src="js/constants.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/elements.js"></script>
+  <script src="js/reactions.js"></script>
+  <script src="js/experiments.js"></script>
   <script src="js/physics_engine.js"></script>
   <script src="js/scenes3d.js"></script>
   <script src="js/audio_lab.js"></script>
