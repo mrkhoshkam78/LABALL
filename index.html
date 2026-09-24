@@ -3,81 +3,93 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Universal Lab v4 | Interactive Science Lab</title>
-  <meta name="description" content="Offline interactive science lab — Physics, Electricity, Energy, Waves, Chemistry, Astronomy & Quantum. FA/EN · 3 themes">
+  <title>Universal Lab v5 | Science Lab</title>
+  <meta name="description" content="Offline interactive science lab — Physics, Electricity, Energy, Waves, Chemistry, Astronomy & Quantum. 4 themes · FA/EN">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <header>
-    <div class="brand">
-      <div class="logo">⚗</div>
-      <div>
-        <h1>Universal Lab</h1>
-        <p>v4.0 · FA / EN · Themes</p>
-      </div>
-    </div>
-    <div class="header-right">
-      <span class="badge" id="badgeOffline">کاملاً آفلاین</span>
-      <button class="icon-btn" id="btnSettings" title="تنظیمات">⚙</button>
-    </div>
-  </header>
-
-  <main class="app">
-    <!-- Settings -->
-    <div class="settings-panel" id="settingsPanel">
-      <h3 id="settingsTitle">⚙ تنظیمات / Settings</h3>
-      <div style="margin-bottom:6px;font-size:12px;color:var(--muted)" id="themeLabel">تم رنگی / Color theme</div>
-      <div class="theme-row">
-        <button class="theme-swatch active" data-t="ocean" title="Ocean"></button>
-        <button class="theme-swatch" data-t="ember" title="Ember"></button>
-        <button class="theme-swatch" data-t="aurora" title="Aurora"></button>
-      </div>
-      <div style="margin-bottom:6px;font-size:12px;color:var(--muted)" id="langLabel">زبان / Language</div>
-      <div class="lang-row">
-        <button class="lang-btn active" data-lang="fa">فارسی</button>
-        <button class="lang-btn" data-lang="en">English</button>
-      </div>
-    </div>
-
-    <nav class="cats" id="cats" aria-label="Categories"></nav>
-    <div class="sub-exps" id="subExps"></div>
-
-    <div class="layout">
-      <section class="panel">
-        <h2 id="controlTitle">—</h2>
-        <p class="sub" id="controlDesc">—</p>
-        <div class="formula-box" id="formulaBox">—</div>
-        <div id="controls"></div>
-        <div class="actions">
-          <button class="primary" id="runBtn">▶ اجرا</button>
-          <button class="secondary" id="resetBtn">↺ بازنشانی</button>
-          <button class="secondary" id="saveBtn">☆ ذخیره</button>
+  <canvas id="bgCanvas"></canvas>
+  <div class="app-wrap">
+    <header>
+      <div class="brand">
+        <div class="logo">⚗</div>
+        <div>
+          <h1>Universal Lab</h1>
+          <p>v5.0 · Modular · 4 Themes</p>
         </div>
-        <p class="saved-msg" id="savedMsg" aria-live="polite"></p>
-      </section>
+      </div>
+      <div class="header-right">
+        <span class="badge" id="badgeOffline">کاملاً آفلاین</span>
+        <button type="button" class="icon-btn" id="btnSettings" title="Settings">⚙</button>
+      </div>
+    </header>
 
-      <section class="panel">
-        <h2 id="resultsTitle">نتایج و مشاهده‌گر</h2>
-        <p class="sub" id="resultsSub">محاسبات زنده و انیمیشن آزمایش</p>
-        <div class="results" id="metrics"></div>
-        <div class="visual">
-          <div class="visual-head">
-            <b id="visualTitle">—</b>
-            <span id="liveLabel">انیمیشن زنده</span>
+    <main class="app">
+      <div class="settings-panel" id="settingsPanel">
+        <h3>⚙ Settings / تنظیمات</h3>
+        <div style="margin-bottom:5px;font-size:11.5px;color:var(--muted)">Theme / تم</div>
+        <div class="theme-row">
+          <button type="button" class="theme-swatch active" data-t="ocean" title="Ocean"></button>
+          <button type="button" class="theme-swatch" data-t="ember" title="Ember"></button>
+          <button type="button" class="theme-swatch" data-t="aurora" title="Aurora"></button>
+          <button type="button" class="theme-swatch" data-t="light" title="Light"></button>
+        </div>
+        <div style="margin-bottom:5px;font-size:11.5px;color:var(--muted)">Language / زبان</div>
+        <div class="lang-row">
+          <button type="button" class="lang-btn active" data-lang="fa">فارسی</button>
+          <button type="button" class="lang-btn" data-lang="en">English</button>
+        </div>
+      </div>
+
+      <nav class="cats" id="cats"></nav>
+      <div class="sub-exps" id="subExps"></div>
+
+      <div class="layout">
+        <section class="panel">
+          <h2 id="controlTitle">—</h2>
+          <p class="sub" id="controlDesc">—</p>
+          <div class="formula-box" id="formulaBox">—</div>
+          <div id="controls"></div>
+          <div class="actions">
+            <button type="button" class="primary" id="runBtn">▶ اجرا</button>
+            <button type="button" class="secondary" id="resetBtn">↺ بازنشانی</button>
+            <button type="button" class="secondary" id="saveBtn">☆ ذخیره</button>
           </div>
-          <canvas id="scene" width="800" height="300" aria-label="Live animation"></canvas>
-        </div>
-        <div class="note" id="explanation">—</div>
-      </section>
-    </div>
-  </main>
+          <p class="saved-msg" id="savedMsg"></p>
+        </section>
 
-  <footer>
-    Universal Lab v4.0 · Physics · Electricity · Energy · Waves · Chemistry · Astronomy & Quantum ·
-    3 themes · FA/EN · Offline · GitHub-ready
-  </footer>
+        <section class="panel">
+          <h2 id="resultsTitle">نتایج و مشاهده‌گر</h2>
+          <p class="sub" id="resultsSub">محاسبات زنده و انیمیشن</p>
+          <div class="results" id="metrics"></div>
+          <div class="visual">
+            <div class="visual-head">
+              <b id="visualTitle">—</b>
+              <span id="liveLabel">انیمیشن زنده</span>
+            </div>
+            <canvas id="scene" width="700" height="280"></canvas>
+          </div>
+          <div class="note" id="explanation">—</div>
+        </section>
+      </div>
+    </main>
 
-  <script src="js/data.js"></script>
+    <footer>
+      Universal Lab v5 · Modular JS · 4 themes (incl. Light) · FA/EN · Live animations · Dynamic background
+    </footer>
+  </div>
+
+  <!-- Modular scripts (order matters) -->
+  <script src="js/constants.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/elements.js"></script>
+  <script src="js/reactions.js"></script>
+  <script src="js/exp_physics.js"></script>
+  <script src="js/exp_electric.js"></script>
+  <script src="js/exp_energy.js"></script>
+  <script src="js/exp_wave.js"></script>
+  <script src="js/exp_chemistry.js"></script>
+  <script src="js/exp_astronomy.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>

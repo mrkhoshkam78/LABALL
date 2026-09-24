@@ -1,36 +1,42 @@
-# Universal Lab v4.0
+# Universal Lab v5.0
 
-Interactive offline science laboratory — Physics, Electricity, Mechanical Energy, Waves, Chemistry, Astronomy & Quantum.
+Interactive offline science laboratory with modular architecture.
 
-## Features
+## What's new in v5
 
-- **10+ Physics experiments** with verified formulas and live Canvas animations
-- **10+ Electricity experiments** (Ohm, series/parallel, capacitor, Coulomb, Lorentz, transformer, RLC, power factor, Kirchhoff)
-- **10+ Mechanical Energy experiments** (KE/PE, conservation, spring, power, efficiency, pendulum, gravity, collisions, heat, orbital)
-- **Waves, Chemistry** (full 118-element periodic table + reactions + molar mass)
-- **Astronomy & Quantum** (Kepler, escape velocity, blackbody, photoelectric, de Broglie, Bohr, Schwarzschild, Hubble)
-- **3 color themes**: Ocean · Ember · Aurora
-- **Bilingual**: فارسی / English (toggle in Settings)
-- **Real-time** parameter updates and experiment-specific animations
-- Fully offline, single-folder, GitHub Pages ready
+- **Settings fixed** — theme & language toggle work reliably
+- **Live animations fixed** — Canvas redraws every frame with experiment-specific visuals
+- **4 themes**: Ocean · Ember · Aurora · **Light**
+- **Dynamic particle background** with soft connections
+- **Modular JS**: formulas & calculations split per section
+  - `exp_physics.js`, `exp_electric.js`, `exp_energy.js`, …
+  - `constants.js`, `elements.js`, `reactions.js`, `i18n.js`
+- Bilingual FA / EN
+- Full periodic table (118), reactions, quantum & astronomy
 
 ## Structure
 
 ```
-Universal_Lab_v4/
+Universal_Lab_v5/
 ├── index.html
 ├── css/style.css
-├── js/data.js      # constants, elements, experiment definitions
-├── js/app.js       # UI, calculations, animations
+├── js/
+│   ├── constants.js
+│   ├── i18n.js
+│   ├── elements.js
+│   ├── reactions.js
+│   ├── exp_physics.js
+│   ├── exp_electric.js
+│   ├── exp_energy.js
+│   ├── exp_wave.js
+│   ├── exp_chemistry.js
+│   ├── exp_astronomy.js
+│   └── app.js
 └── README.md
 ```
 
 ## Run
 
-Open `index.html` in any modern browser. No build step or server required.
+Open `index.html` in a browser. No build or server needed.
 
-For GitHub Pages: push this folder and enable Pages on the main branch.
-
-## License
-
-Free for educational and personal use.
+GitHub Pages: push folder and enable Pages on main branch.
