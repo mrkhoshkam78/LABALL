@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Universal Lab | آزمایشگاه علمی · نسخه ۳.۰</title>
+  <meta name="description" content="آزمایشگاه علمی تعاملی آفلاین — فیزیک، برق، انرژی، موج، شیمی، نجوم و فیزیک کوانتوم">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="logo">⚗</div>
+      <div>
+        <h1>Universal Lab</h1>
+        <p>آزمایشگاه علمی تعاملی · نسخه ۳.۰ · مناسب گیت‌هاب</p>
+      </div>
+    </div>
+    <div class="header-right">
+      <span class="badge">کاملاً آفلاین</span>
+      <span>● JS Modules · Canvas</span>
+    </div>
+  </header>
+
+  <main class="app">
+    <!-- Main category tabs -->
+    <nav class="cats" id="cats" aria-label="دسته‌بندی آزمایش‌ها"></nav>
+
+    <!-- Sub-experiment chips -->
+    <div class="sub-exps" id="subExps"></div>
+
+    <div class="layout">
+      <!-- Control panel -->
+      <section class="panel" id="controlPanel">
+        <h2 id="controlTitle">کنترل آزمایش</h2>
+        <p class="sub" id="controlDesc">پارامترها را تنظیم کنید.</p>
+        <div class="formula-box" id="formulaBox">—</div>
+        <div id="controls"></div>
+        <div class="actions">
+          <button class="primary" id="runBtn">▶ اجرای آزمایش</button>
+          <button class="secondary" id="resetBtn">↺ بازنشانی</button>
+          <button class="secondary" id="saveBtn">☆ ذخیره</button>
+        </div>
+        <p class="saved-msg" id="savedMsg" aria-live="polite"></p>
+      </section>
+
+      <!-- Results & visualizer -->
+      <section class="panel">
+        <h2>نتایج و مشاهده‌گر</h2>
+        <p class="sub">نتایج محاسبات و نمایش تصویری زنده آزمایش.</p>
+        <div class="results" id="metrics"></div>
+        <div class="visual">
+          <div class="visual-head">
+            <b id="visualTitle">مدل آموزشی</b>
+            <span>انیمیشن زنده</span>
+          </div>
+          <canvas id="scene" width="800" height="320" aria-label="نمایش گرافیکی آزمایش"></canvas>
+        </div>
+        <div class="note" id="explanation">مدل آموزشی ساده برای درک مفاهیم پایه.</div>
+      </section>
+    </div>
+  </main>
+
+  <footer>
+    Universal Lab v3.0 · فیزیک (۱۰+) · برق (۱۰+) · انرژی (۱۰+) · موج · شیمی (جدول + ترکیب) · نجوم و کوانتوم ·
+    ساختار ماژولار برای گیت‌هاب · اجرا کاملاً در مرورگر
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
